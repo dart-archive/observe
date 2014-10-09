@@ -1,0 +1,26 @@
+# Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+# Don't run any test-like files that show up in packages directories. It
+# shouldn't be necessary to run "pub install" in these packages, but if you do
+# it shouldn't break the tests.
+*/packages/*/*: Skip
+*/*/packages/*/*: Skip
+*/*/*/packages/*/*: Skip
+*/*/*/*/packages/*/*: Skip
+*/*/*/*/*/packages/*/*: Skip
+
+# (dartium, dart, d8, jsshell, etc)
+[ $browser || $compiler == dart2js ]
+test/unique_message_test: Skip
+build/test/unique_message_test: Skip
+test/transformer_test: Skip
+build/test/transformer_test: Skip
+
+[ $ie ]
+test/list_path_observer_test: RuntimeError, Pass # dartbug.com/20849
+
+[ $compiler == dart2js ]
+test/*: Skip  # raw tests only meant to be run in dartium. Other browsers run
+              # the output of pub-build
