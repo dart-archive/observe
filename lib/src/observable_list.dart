@@ -268,6 +268,26 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     return false;
   }
 
+  ObservableList map(f(E element)) {
+    final derivedList = new ObservableList.from(this.map(f));
+
+    listChanges.listen((List<ListChangeRecord> crs) =>
+        crs.forEach((cr) {
+      if (cr.removed.isNotEmpty) {
+        derivedList.removeRange(cr.index, cr.index + cr.removed.length);
+      }
+
+      if (cr.addedCount > 0) {
+        final addedValues = sublist(cr.index, cr.index + cr.addedCount);
+        derivedList.insertAll(cr.index, addedValues.map(f));
+      }
+    }));
+
+    return derivedList;
+  }
+
+
+
   /// Calculates the changes to the list, if lacking individual splice mutation
   /// information.
   ///
