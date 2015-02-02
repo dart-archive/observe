@@ -50,7 +50,7 @@ class ObserverTransform extends Bindable {
         _getTransformer = computeValue,
         _setTransformer = setValue;
 
-  open(callback(value)) {
+  open(callback) {
     _notifyCallback = callback;
     _value = _getTransformer(_bindable.open(_observedCallback));
     return _value;

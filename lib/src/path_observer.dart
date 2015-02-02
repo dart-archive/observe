@@ -41,7 +41,7 @@ class PathObserver extends _Observer implements Bindable {
   PropertyPath get path => _path;
 
   /// Sets the value at this path.
-  void set value(Object newValue) {
+  void set value(newValue) {
     if (_path != null) _path.setValueFrom(_object, newValue);
   }
 
@@ -289,8 +289,7 @@ _getObjectProperty(object, property) {
     // TODO(sigmund): should we also support using checking dynamically for
     // whether the type practically implements the indexer API
     // (smoke.hasInstanceMethod(type, const Symbol('[]')))?
-    if (object is Indexable<String, dynamic> ||
-        object is Map<String, dynamic> && !_MAP_PROPERTIES.contains(property)) {
+    if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
       return object[smoke.symbolToName(property)];
     }
     try {
@@ -320,8 +319,7 @@ bool _setObjectProperty(object, property, value) {
     }
   } else if (property is Symbol) {
     // Support indexer if available, e.g. Maps or polymer_expressions Scope.
-    if (object is Indexable<String, dynamic> ||
-        object is Map<String, dynamic> && !_MAP_PROPERTIES.contains(property)) {
+    if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
       object[smoke.symbolToName(property)] = value;
       return true;
     }
