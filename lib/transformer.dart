@@ -26,7 +26,6 @@ import 'src/messages.dart';
 /// The transformation adds hooks for field setters and notifies the observation
 /// system of the change.
 class ObservableTransformer extends Transformer {
-
   final bool releaseMode;
   final bool injectBuildLogsInOutput;
   final List<String> _files;
@@ -77,13 +76,13 @@ class ObservableTransformer extends Transformer {
       var id = transform.primaryInput.id;
       // TODO(sigmund): improve how we compute this url
       var url = id.path.startsWith('lib/')
-            ? 'package:${id.package}/${id.path.substring(4)}' : id.path;
+          ? 'package:${id.package}/${id.path.substring(4)}'
+          : id.path;
       var sourceFile = new SourceFile(content, url: url);
       var logger = new BuildLogger(transform,
           convertErrorsToWarnings: !releaseMode,
           detailsUri: 'http://goo.gl/5HPeuP');
-      var transaction = _transformCompilationUnit(
-          content, sourceFile, logger);
+      var transaction = _transformCompilationUnit(content, sourceFile, logger);
       if (!transaction.hasEdits) {
         transform.addOutput(transform.primaryInput);
       } else {
@@ -93,7 +92,8 @@ class ObservableTransformer extends Transformer {
         printer.build(url);
         transform.addOutput(new Asset.fromString(id, printer.text));
       }
-      return logger.writeOutput();
+
+      if (injectBuildLogsInOutput) return logger.writeOutput();
     });
   }
 }
@@ -135,9 +135,9 @@ bool _hasObservable(AnnotatedNode node) =>
 // that is expensive in analyzer, so it isn't feasible yet.
 bool _isObservableAnnotation(Annotation node) =>
     _isAnnotationContant(node, 'observable') ||
-    _isAnnotationContant(node, 'published') ||
-    _isAnnotationType(node, 'ObservableProperty') ||
-    _isAnnotationType(node, 'PublishedProperty');
+        _isAnnotationContant(node, 'published') ||
+        _isAnnotationType(node, 'ObservableProperty') ||
+        _isAnnotationType(node, 'PublishedProperty');
 
 bool _isAnnotationContant(Annotation m, String name) =>
     m.name.name == name && m.constructorName == null && m.arguments == null;
@@ -146,7 +146,6 @@ bool _isAnnotationType(Annotation m, String name) => m.name.name == name;
 
 void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     SourceFile file, BuildLogger logger) {
-
   if (_hasObservable(cls)) {
     logger.warning(NO_OBSERVABLE_ON_CLASS, span: _getSpan(file, cls));
   }
@@ -164,8 +163,9 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
       explicitObservable = true;
     } else if (id.name == 'ChangeNotifier') {
       explicitObservable = true;
-    } else if (id.name != 'HtmlElement' && id.name != 'CustomElement'
-        && id.name != 'Object') {
+    } else if (id.name != 'HtmlElement' &&
+        id.name != 'CustomElement' &&
+        id.name != 'Object') {
       // TODO(sigmund): this is conservative, consider using type-resolution to
       // improve this check.
       implicitObservable = true;
@@ -204,7 +204,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   for (var member in cls.members) {
     if (member is FieldDeclaration) {
       if (member.isStatic) {
-        if (_hasObservable(member)){
+        if (_hasObservable(member)) {
           logger.warning(NO_OBSERVABLE_ON_STATIC_FIELD,
               span: _getSpan(file, member));
         }
@@ -249,14 +249,13 @@ void _mixinObservable(ClassDeclaration cls, TextEditTransaction code) {
     code.edit(pos, pos, ' with ChangeNotifier ');
   } else {
     var params = cls.typeParameters;
-    var pos =  params != null ? params.end : cls.name.end;
+    var pos = params != null ? params.end : cls.name.end;
     code.edit(pos, pos, ' extends ChangeNotifier ');
   }
 }
 
 SimpleIdentifier _getSimpleIdentifier(Identifier id) =>
     id is PrefixedIdentifier ? id.identifier : id;
-
 
 bool _hasKeyword(Token token, Keyword keyword) =>
     token is KeywordToken && token.keyword == keyword;
@@ -322,7 +321,6 @@ bool _isReadOnly(VariableDeclarationList fields) {
 
 void _transformFields(SourceFile file, FieldDeclaration member,
     TextEditTransaction code, BuildLogger logger) {
-
   final fields = member.fields;
   if (_isReadOnly(fields)) return;
 
@@ -371,9 +369,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
 
   String metadata = '';
   if (fields.variables.length > 1) {
-    metadata = member.metadata
-      .map((m) => _getOriginalCode(code, m))
-      .join(' ');
+    metadata = member.metadata.map((m) => _getOriginalCode(code, m)).join(' ');
     metadata = '@reflectable $metadata';
   }
 
