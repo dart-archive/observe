@@ -28,12 +28,19 @@ import 'src/messages.dart';
 class ObservableTransformer extends Transformer {
 
   final bool releaseMode;
+  final bool injectBuildLogsInOutput;
   final List<String> _files;
-  ObservableTransformer([List<String> files, bool releaseMode])
-      : _files = files, releaseMode = releaseMode == true;
+  ObservableTransformer(
+      {List<String> files, bool releaseMode, bool injectBuildLogsInOutput})
+      : _files = files,
+        releaseMode = releaseMode == true,
+        injectBuildLogsInOutput = injectBuildLogsInOutput == null
+            ? releaseMode != true
+            : injectBuildLogsInOutput;
   ObservableTransformer.asPlugin(BarbackSettings settings)
       : _files = _readFiles(settings.configuration['files']),
-        releaseMode = settings.mode == BarbackMode.RELEASE;
+        releaseMode = settings.mode == BarbackMode.RELEASE,
+        injectBuildLogsInOutput = settings.mode != BarbackMode.RELEASE;
 
   static List<String> _readFiles(value) {
     if (value == null) return null;
