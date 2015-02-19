@@ -2,7 +2,7 @@
   * Don't output log files by default in release mode, and provide option to
     turn them off entirely.
   * Changed the api for the ObserveTransformer to use named arguments.
-  
+
 #### 0.12.2+1
   * Cleanup some method signatures.
 
