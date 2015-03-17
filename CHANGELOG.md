@@ -1,3 +1,6 @@
+#### 0.13.0+1
+  * Widen the constraint on analyzer.
+
 #### 0.13.0
   * Don't output log files by default in release mode, and provide option to
     turn them off entirely.
