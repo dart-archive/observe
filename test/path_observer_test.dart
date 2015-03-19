@@ -11,12 +11,17 @@ import 'package:observe/src/path_observer.dart'
 
 import 'observe_test_utils.dart';
 
+import 'package:observe/mirrors_used.dart'; // make test smaller.
+import 'package:smoke/mirrors.dart';
+
 // This file contains code ported from:
 // https://github.com/rafaelw/ChangeSummary/blob/master/tests/test.js
 // Dart note: getting invalid properties is an error, unlike in JS where it
 // returns undefined. This difference comes up where we check for _throwsNSM in
 // the tests below.
 main() => dirtyCheckZone().run(() {
+  useMirrors();
+
   group('PathObserver', observePathTests);
 
   group('PropertyPath', () {

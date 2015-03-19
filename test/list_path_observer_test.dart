@@ -7,7 +7,13 @@ import 'package:observe/observe.dart';
 import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
-main() => dirtyCheckZone().run(_runTests);
+import 'package:observe/mirrors_used.dart'; // make test smaller.
+import 'package:smoke/mirrors.dart';
+
+main() {
+  useMirrors();
+  dirtyCheckZone().run(_runTests);
+}
 
 _runTests() {
   var list;

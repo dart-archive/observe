@@ -9,7 +9,13 @@ import 'package:observe/src/dirty_check.dart' as dirty_check;
 import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
-main() => dirtyCheckZone().run(_tests);
+import 'package:observe/mirrors_used.dart'; // make test smaller.
+import 'package:smoke/mirrors.dart';
+
+main() {
+  useMirrors();
+  dirtyCheckZone().run(_tests);
+}
 
 void _tests() {
   // Note: to test the basic Observable system, we use ObservableBox due to its
