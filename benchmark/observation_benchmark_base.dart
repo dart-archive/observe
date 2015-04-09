@@ -112,5 +112,6 @@ abstract class ObservationBenchmarkBase extends BenchmarkBase {
       obj.deliverChanges();
       if (obj is ObservableList) obj.deliverListChanges();
     }
+    Observable.dirtyCheck();
   }
 }
