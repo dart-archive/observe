@@ -29,5 +29,5 @@ environment:
 transformers:
 - observe:
     files:
-      - test/benchmark/test_observable.dart
-      - test/benchmark/test_path_observable.dart
+      - benchmark/test_observable.dart
+      - benchmark/test_path_observable.dart
