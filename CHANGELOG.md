@@ -1,3 +1,8 @@
+#### 0.13.0+2
+  * Fixed `close` in `PathObserver` so it doesn't leak observers.
+  * Ported the benchmarks from
+    [observe-js](https://github.com/Polymer/observe-js/tree/master/benchmark).
+
 #### 0.13.0+1
   * Widen the constraint on analyzer.
 

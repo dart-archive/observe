@@ -1,0 +1,73 @@
+<html>
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<head>
+  <title>Observation Benchmarks</title>
+  <meta charset="utf-8">
+  <style>
+    * {
+      font-family: arial, helvetica, sans-serif;
+      font-weight: 400;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgba(0, 0, 0, .1);
+    }
+    #canvasWrapper {
+      width: 800px;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+<h1>Observation Benchmarks</h1>
+
+<select id="benchmarkSelect">
+  <option>ObjectBenchmark</option>
+  <option>SetupObjectBenchmark</option>
+  <option>ObservableListBenchmark</option>
+  <option>SetupObservableListBenchmark</option>
+  <option>PathBenchmark</option>
+  <option>SetupPathBenchmark</option>
+</select>
+<select id="configSelect">
+</select>
+
+<button id="go">Run Benchmarks</button>
+
+<span>Object Count: </span>
+<input id="objectCountInput" style="width: 200px" value="4000, 8000, 16000, 32000">
+<span id="mutationCountWrapper">
+  <span>Mutation Count: </span>
+  <input id="mutationCountInput" style="width: 200px"
+         value="0, 100, 200, 400, 800, 1600"><br>
+</span>
+<br>
+<span id="status"></span>
+
+<section style="width: 100%">
+  <article>
+    <div style="display:inline-block; padding-bottom: 20px">
+      Times in ms
+    </div>
+    <div id="canvasWrapper" style="display:inline-block">
+    </div>
+    <div style="display:inline-block">
+      <ul id="legendList">
+      </ul>
+    </div>
+  </article>
+</section>
+<h3 style="margin-left: 440px">Object Set Size</h3>
+<script type="application/dart" src="index.dart"></script>
+<script src="packages/browser/dart.js">
+</script>
+</body>
+</html>

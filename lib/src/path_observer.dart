@@ -838,6 +838,7 @@ class _ObservedSet {
       _lastSet = new _ObservedSet._(rootObject);
     }
     _lastSet.open(observer, rootObject);
+    return _lastSet;
   }
 
   _ObservedSet._(rootObject)
@@ -855,10 +856,11 @@ class _ObservedSet {
   }
 
   void close(_Observer obs) {
+    _observers.remove(obs);
     if (_observers.isNotEmpty) return;
 
     if (_objects != null) {
-      for (var sub in _objects) sub.cancel();
+      for (var sub in _objects.values) sub.cancel();
       _objects = null;
     }
     _rootObject = null;
