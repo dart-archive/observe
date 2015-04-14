@@ -64,7 +64,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     return _listChanges.stream;
   }
 
-  bool get _hasListObservers =>
+  bool get hasListObservers =>
       _listChanges != null && _listChanges.hasListener;
 
   @reflectable int get length => _list.length;
@@ -75,7 +75,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
 
     // Produce notifications if needed
     _notifyChangeLength(len, value);
-    if (_hasListObservers) {
+    if (hasListObservers) {
       if (value < len) {
         _recordChange(new ListChangeRecord(this, value,
             removed: _list.getRange(value, len).toList()));
@@ -91,7 +91,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
 
   @reflectable void operator []=(int index, E value) {
     var oldValue = _list[index];
-    if (_hasListObservers) {
+    if (hasListObservers) {
       _recordChange(new ListChangeRecord(this, index, addedCount: 1,
           removed: [oldValue]));
     }
@@ -114,7 +114,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
       iterable = iterable.toList();
     }
     var len = iterable.length;
-    if (_hasListObservers && len > 0) {
+    if (hasListObservers && len > 0) {
       _recordChange(new ListChangeRecord(this, index, addedCount: len,
           removed: _list.getRange(index, len).toList()));
     }
@@ -124,7 +124,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   void add(E value) {
     int len = _list.length;
     _notifyChangeLength(len, len + 1);
-    if (_hasListObservers) {
+    if (hasListObservers) {
       _recordChange(new ListChangeRecord(this, len, addedCount: 1));
     }
 
@@ -138,7 +138,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     _notifyChangeLength(len, _list.length);
 
     int added = _list.length - len;
-    if (_hasListObservers && added > 0) {
+    if (hasListObservers && added > 0) {
       _recordChange(new ListChangeRecord(this, len, addedCount: added));
     }
   }
@@ -159,7 +159,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     int len = _list.length;
 
     _notifyChangeLength(len, len - rangeLength);
-    if (_hasListObservers && rangeLength > 0) {
+    if (hasListObservers && rangeLength > 0) {
       _recordChange(new ListChangeRecord(this, start,
           removed: _list.getRange(start, end).toList()));
     }
@@ -187,7 +187,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
 
     _notifyChangeLength(len, _list.length);
 
-    if (_hasListObservers && insertionLength > 0) {
+    if (hasListObservers && insertionLength > 0) {
       _recordChange(new ListChangeRecord(this, index,
           addedCount: insertionLength));
     }
@@ -209,7 +209,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     _list.setRange(index + 1, length, this, index);
 
     _notifyChangeLength(_list.length - 1, _list.length);
-    if (_hasListObservers) {
+    if (hasListObservers) {
       _recordChange(new ListChangeRecord(this, index, addedCount: 1));
     }
     _list[index] = element;
@@ -232,7 +232,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   }
 
   void _recordChange(ListChangeRecord record) {
-    if (!_hasListObservers) return;
+    if (!hasListObservers) return;
 
     if (_listRecords == null) {
       _listRecords = [];
@@ -261,7 +261,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     var records = projectListSplices(this, _listRecords);
     _listRecords = null;
 
-    if (_hasListObservers && !records.isEmpty) {
+    if (hasListObservers && !records.isEmpty) {
       _listChanges.add(new UnmodifiableListView<ListChangeRecord>(records));
       return true;
     }
