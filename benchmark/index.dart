@@ -105,7 +105,9 @@ main() {
         await new Future(() {});
         var factory = benchmarkFactories[benchmarkSelect.value];
         var benchmark = factory(objectCount, mutationCount, configSelect.value);
-        var resultMicros = benchmark.measure();
+        // Divide by 10 because benchmark_harness returns the amount of time it
+        // took to run 10 times, not once :(.
+        var resultMicros = benchmark.measure() / 10;
 
         if (results.length <= x) results.add([]);
         results[x].add(resultMicros / 1000);
