@@ -1,3 +1,7 @@
+#### 0.13.1
+
+ * Update to analyzer `<=0.26.0`.
+
 #### 0.13.0+2
   * Fixed `close` in `PathObserver` so it doesn't leak observers.
   * Ported the benchmarks from
