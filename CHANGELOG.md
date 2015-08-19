@@ -1,3 +1,7 @@
+#### 0.13.1+2
+
+ * Update to analyzer '<0.27.0'
+
 #### 0.13.1+1
 
  * Update to logging `<0.12.0`.
