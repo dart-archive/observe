@@ -67,13 +67,13 @@ class ObservableTransformer extends Transformer {
   }
 
   Future apply(Transform transform) {
-    print("Exame : ${transform.primaryInput.id}");
 
     return transform.primaryInput.readAsString().then((content) {
       // Do a quick string check to determine if this is this file even
       // plausibly might need to be transformed. If not, we can avoid an
       // expensive parse.
       if (!observableMatcher.hasMatch(content)) return null;
+
       var id = transform.primaryInput.id;
       // TODO(sigmund): improve how we compute this url
       var url = id.path.startsWith('lib/')
@@ -181,7 +181,11 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     for (var type in cls.withClause.mixinTypes) {
       var id = _getSimpleIdentifier(type.name);
       if (id.name == 'Observable') {
-        code.edit(id.offset, id.end, 'ChangeNotifier,JsProxy');
+        if (_getSimpleIdentifier(cls.extendsClause.superclass.name)=='PolymerElement') {
+          code.edit(id.offset, id.end, 'ChangeNotifier');
+        } else {
+          code.edit(id.offset, id.end, 'ChangeNotifier,JsProxy');
+        }
         explicitObservable = true;
         break;
       } else if (id.name == 'ChangeNotifier') {

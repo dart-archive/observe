@@ -4,7 +4,7 @@
 
 library observe.src.observable;
 
-import 'package:polymer/polymer.dart' show JsProxy, PolymerReflectable,jsProxyReflectable;
+import 'package:polymer/polymer.dart' show jsProxyReflectable;
 import 'dart:async';
 import 'dart:collection';
 

@@ -22,6 +22,16 @@ class MyModel extends Observable {
   MyModel(this.field1);
 }
 
+class FakeMixin {
+
+}
+
+class MyModel2 extends Object with Observable,FakeMixin {
+  @observable String field1;
+
+  MyModel2(this.field1);
+}
+
 void _tests() {
   // Note: to test the basic Observable system, we use ObservableBox due to its
   // simplicity. We also test a variant that is based on dirty-checking.
@@ -34,9 +44,29 @@ void _tests() {
       expect(im.type.declarations,contains("field1"));
       expect(im.invokeGetter("field1"),"uno");
     });
+
+    test("reflect works again",() {
+      MyModel2 m = new MyModel2("uno");
+      InstanceMirror im =jsProxyReflectable.reflect(m);
+      expect(im.type.simpleName,"MyModel2");
+      expect(im.type.declarations,contains("field1"));
+      expect(im.invokeGetter("field1"),"uno");
+    });
     
     test("change field",() async {
       MyModel m = new MyModel("ciao");
+
+      Completer completer = new Completer();
+      m.changes.listen((List<ChangeRecord> records) {
+        completer.complete(true);
+      });
+
+      m.field1 = "pippo";
+      expect(completer.future,completion(isTrue));
+    });
+
+    test("change field 2",() async {
+      MyModel2 m = new MyModel2("ciao");
 
       Completer completer = new Completer();
       m.changes.listen((List<ChangeRecord> records) {
