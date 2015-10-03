@@ -116,7 +116,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
     _map[key] = value;
 
     if (len != _map.length) {
-      notifyPropertyChange(#length, len, _map.length);
+      notifyPropertyChange("length", len, _map.length);
       notifyChange(new MapChangeRecord.insert(key, value));
       _notifyKeysValuesChanged();
     } else if (oldValue != value) {
@@ -133,7 +133,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
     int len = _map.length;
     V result = _map.putIfAbsent(key, ifAbsent);
     if (hasObservers && len != _map.length) {
-      notifyPropertyChange(#length, len, _map.length);
+      notifyPropertyChange("length", len, _map.length);
       notifyChange(new MapChangeRecord.insert(key, result));
       _notifyKeysValuesChanged();
     }
@@ -157,7 +157,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
       _map.forEach((key, value) {
         notifyChange(new MapChangeRecord.remove(key, value));
       });
-      notifyPropertyChange(#length, len, 0);
+      notifyPropertyChange("length", len, 0);
       _notifyKeysValuesChanged();
     }
     _map.clear();
@@ -170,11 +170,11 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
   // Note: we don't really have a reasonable old/new value to use here.
   // But this should fix "keys" and "values" in templates with minimal overhead.
   void _notifyKeysValuesChanged() {
-    notifyChange(new PropertyChangeRecord(this, #keys, null, null));
+    notifyChange(new PropertyChangeRecord(this, "keys", null, null));
     _notifyValuesChanged();
   }
 
   void _notifyValuesChanged() {
-    notifyChange(new PropertyChangeRecord(this, #values, null, null));
+    notifyChange(new PropertyChangeRecord(this, "values", null, null));
   }
 }

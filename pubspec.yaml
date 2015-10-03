@@ -13,7 +13,10 @@ dependencies:
   barback: '>=0.14.2 <0.16.0'
   logging: '>=0.9.0 <0.12.0'
   path: '>=0.9.0 <2.0.0'
-  smoke: '>=0.1.0 <0.4.0'
+  #smoke: '>=0.1.0 <0.4.0'
+  test: any
+  polymer: '>=1.0.0'
+  reflectable: '>=0.1.4'
   source_maps: '>=0.9.4 <0.11.0'
   source_span: '>=1.0.0 <2.0.0'
   utf: '>=0.9.0 <0.10.0'
@@ -26,8 +29,18 @@ dev_dependencies:
   stack_trace: '>=0.9.1 <2.0.0'
 environment:
   sdk: '>=1.2.0 <2.0.0'
+dependency_overrides:
+  polymer:
+   path: ../polymer-dart
+  polymer_interop:
+   path: ../polymer_interop
 transformers:
 - observe:
     files:
-      - benchmark/test_observable.dart
-      - benchmark/test_path_observable.dart
+      - test/observe2_test.dart
+- reflectable:
+    entry_points:
+      - test/observe2_test.dart
+
+- test/pub_serve:
+    $include: test/**_test{.*,}.dart

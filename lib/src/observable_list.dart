@@ -242,9 +242,9 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   }
 
   void _notifyChangeLength(int oldValue, int newValue) {
-    notifyPropertyChange(#length, oldValue, newValue);
-    notifyPropertyChange(#isEmpty, oldValue == 0, newValue == 0);
-    notifyPropertyChange(#isNotEmpty, oldValue != 0, newValue != 0);
+    notifyPropertyChange("length", oldValue, newValue);
+    notifyPropertyChange("isEmpty", oldValue == 0, newValue == 0);
+    notifyPropertyChange("isNotEmpty", oldValue != 0, newValue != 0);
   }
 
   /// Deprecated. Name had a typo, use [discardListChanges] instead.

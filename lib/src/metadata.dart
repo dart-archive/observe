@@ -4,6 +4,9 @@
 
 library observe.src.metadata;
 
+import "package:polymer/polymer.dart" show PolymerReflectable;
+export "package:polymer/polymer.dart" show reflectable;
+
 /// Use `@observable` to make a field automatically observable, or to indicate
 /// that a property is observable. This only works on classes that extend or
 /// mix in `Observable`.
@@ -20,7 +23,7 @@ const ObservableProperty observable = const ObservableProperty();
 //     If needed, you can subclass this to create another annotation that will
 //     also be treated as observable.
 // Note: observable properties imply reflectable.
-class ObservableProperty {
+class ObservableProperty extends PolymerReflectable {
   const ObservableProperty();
 }
 
@@ -32,7 +35,7 @@ class ObservableProperty {
 /// `PathObserver`, or similar systems, once the code is deployed, if you are
 /// not doing a different kind of code-generation for your app. If you are using
 /// polymer, you most likely don't need to use this annotation anymore.
-const Reflectable reflectable = const Reflectable();
+//const Reflectable reflectable = const Reflectable();
 
 /// An annotation that is used to make a type or member reflectable. This makes
 /// it available to `PathObserver` at runtime. For example:
@@ -47,6 +50,6 @@ const Reflectable reflectable = const Reflectable();
 ///       // This will work even if the code has been tree-shaken/minified:
 ///       final monster = new Monster();
 ///       new PathObserver(monster, 'health').changes.listen(...);
-class Reflectable {
-  const Reflectable();
-}
+//class Reflectable {
+//  const Reflectable();
+//}

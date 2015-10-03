@@ -1,12 +1,12 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'package:observe/transformer.dart';
-import 'package:unittest/compact_vm_config.dart';
-import 'package:unittest/unittest.dart';
+//import 'package:test/compact_vm_config.dart';
+import 'package:test/test.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 main() {
@@ -199,7 +199,7 @@ String _sampleObservableOutput(String annotation) =>
     "}\n";
 
 _makeSetter(type, name) => '@reflectable set $name($type value) { '
-    '__\$$name = notifyPropertyChange(#$name, __\$$name, value); }';
+    '__\$$name = notifyPropertyChange(\"$name\", __\$$name, value); }';
 
 String _complexObservable(String annotation) => '''
 class Foo extends Observable {

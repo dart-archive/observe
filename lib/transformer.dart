@@ -67,12 +67,13 @@ class ObservableTransformer extends Transformer {
   }
 
   Future apply(Transform transform) {
+    print("Exame : ${transform.primaryInput.id}");
+
     return transform.primaryInput.readAsString().then((content) {
       // Do a quick string check to determine if this is this file even
       // plausibly might need to be transformed. If not, we can avoid an
       // expensive parse.
       if (!observableMatcher.hasMatch(content)) return null;
-
       var id = transform.primaryInput.id;
       // TODO(sigmund): improve how we compute this url
       var url = id.path.startsWith('lib/')
@@ -135,9 +136,9 @@ bool _hasObservable(AnnotatedNode node) =>
 // that is expensive in analyzer, so it isn't feasible yet.
 bool _isObservableAnnotation(Annotation node) =>
     _isAnnotationContant(node, 'observable') ||
-        _isAnnotationContant(node, 'published') ||
+        _isAnnotationContant(node, 'reflectable') ||
         _isAnnotationType(node, 'ObservableProperty') ||
-        _isAnnotationType(node, 'PublishedProperty');
+        _isAnnotationType(node, 'PolymerReflectable');
 
 bool _isAnnotationContant(Annotation m, String name) =>
     m.name.name == name && m.constructorName == null && m.arguments == null;
@@ -159,7 +160,11 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   if (cls.extendsClause != null) {
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
     if (id.name == 'Observable') {
-      code.edit(id.offset, id.end, 'ChangeNotifier');
+      if (cls.withClause==null) {
+        code.edit(id.offset, id.end, 'JsProxy with ChangeNotifier');
+      } else {
+        code.edit(cls.withClause.mixinTypes[0].offset,cls.withClause.mixinTypes[0].offset,"JsProxy");
+      }
       explicitObservable = true;
     } else if (id.name == 'ChangeNotifier') {
       explicitObservable = true;
@@ -176,7 +181,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     for (var type in cls.withClause.mixinTypes) {
       var id = _getSimpleIdentifier(type.name);
       if (id.name == 'Observable') {
-        code.edit(id.offset, id.end, 'ChangeNotifier');
+        code.edit(id.offset, id.end, 'ChangeNotifier,JsProxy');
         explicitObservable = true;
         break;
       } else if (id.name == 'ChangeNotifier') {
@@ -395,7 +400,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     if (end.type == TokenType.COMMA) code.edit(end.offset, end.end, ';');
 
     code.edit(end.end, end.end, ' @reflectable set $name($type value) { '
-        '__\$$name = notifyPropertyChange(#$name, __\$$name, value); }');
+        '__\$$name = notifyPropertyChange(\'$name\', __\$$name, value); }');
   }
 }
 
@@ -413,4 +418,4 @@ Token _findFieldSeperator(Token token) {
 // to do this would be to switch to use the analyzer to resolve whether
 // annotations are subtypes of ObservableProperty.
 final observableMatcher =
-    new RegExp("@(published|observable|PublishedProperty|ObservableProperty)");
+    new RegExp("@(reflectable|observable|PolymerReflectable|ObservableProperty)");

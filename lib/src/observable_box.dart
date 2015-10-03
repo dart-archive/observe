@@ -20,7 +20,7 @@ class ObservableBox<T> extends ChangeNotifier {
   @reflectable T get value => _value;
 
   @reflectable void set value(T newValue) {
-    _value = notifyPropertyChange(#value, _value, newValue);
+    _value = notifyPropertyChange("value", _value, newValue);
   }
 
   String toString() => '#<$runtimeType value: $value>';

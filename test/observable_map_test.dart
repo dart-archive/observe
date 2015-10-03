@@ -1,10 +1,10 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 
 main() => dirtyCheckZone().run(_runTests);
@@ -29,7 +29,7 @@ _runTests() {
       map = toObservable({'a': 1, 'b': 2, 'c': 3});
       changes = null;
       sub = map.changes.listen((records) {
-        changes = getPropertyChangeRecords(records, #length);
+        changes = getPropertyChangeRecords(records, "length");
       });
     });
 
@@ -198,8 +198,8 @@ _runTests() {
       keysChanged = 0;
       valuesChanged = 0;
       sub = map.changes.listen((records) {
-        keysChanged += getPropertyChangeRecords(records, #keys).length;
-        valuesChanged += getPropertyChangeRecords(records, #values).length;
+        keysChanged += getPropertyChangeRecords(records, "keys").length;
+        valuesChanged += getPropertyChangeRecords(records, "values").length;
       });
     });
 
@@ -306,8 +306,8 @@ _runTests() {
         expectChanges(records, [
           _lengthChange(map, 2, 3),
           _insertKey('c', 3),
-          _propChange(map, #keys),
-          _propChange(map, #values),
+          _propChange(map, "keys"),
+          _propChange(map, "values"),
         ]);
       });
     });
@@ -322,11 +322,11 @@ _runTests() {
       return new Future(() {
         expectChanges(records, [
           _changeKey('a', 1, 42),
-          _propChange(map, #values),
+          _propChange(map, "values"),
           _lengthChange(map, 2, 3),
           _insertKey('c', 3),
-          _propChange(map, #keys),
-          _propChange(map, #values),
+          _propChange(map, "keys"),
+          _propChange(map, "values"),
         ]);
       });
     });
@@ -339,8 +339,8 @@ _runTests() {
         expectChanges(records, [
           _removeKey('b', 2),
           _lengthChange(map, 2, 1),
-          _propChange(map, #keys),
-          _propChange(map, #values),
+          _propChange(map, "keys"),
+          _propChange(map, "values"),
         ]);
       });
     });
@@ -354,8 +354,8 @@ _runTests() {
           _removeKey('a', 1),
           _removeKey('b', 2),
           _lengthChange(map, 2, 0),
-          _propChange(map, #keys),
-          _propChange(map, #values),
+          _propChange(map, "keys"),
+          _propChange(map, "values"),
         ]);
       });
     });
@@ -363,7 +363,7 @@ _runTests() {
 }
 
 _lengthChange(map, int oldValue, int newValue) =>
-    new PropertyChangeRecord(map, #length, oldValue, newValue);
+    new PropertyChangeRecord(map, "length", oldValue, newValue);
 
 _changeKey(key, old, newValue) => new MapChangeRecord(key, old, newValue);
 

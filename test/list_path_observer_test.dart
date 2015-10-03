@@ -1,10 +1,10 @@
-// Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2013, the Dart project authors.  Please see the AUTHOR file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 
 import 'package:observe/mirrors_used.dart'; // make test smaller.
@@ -76,8 +76,8 @@ class TestModel extends ChangeNotifier {
   TestModel();
 
   get a => _a;
-  void set a(newValue) { _a = notifyPropertyChange(#a, _a, newValue); }
+  void set a(newValue) { _a = notifyPropertyChange("a", _a, newValue); }
 
   get b => _b;
-  void set b(newValue) { _b = notifyPropertyChange(#b, _b, newValue); }
+  void set b(newValue) { _b = notifyPropertyChange("b", _b, newValue); }
 }

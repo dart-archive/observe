@@ -1,10 +1,10 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:observe/src/path_observer.dart'
     show getSegmentsOfPropertyPathForTesting,
          observerSentinelForTesting;
@@ -40,43 +40,43 @@ main() => dirtyCheckZone().run(() {
 
       expectPath('/foo', '<invalid path>', 0);
       expectPath('1.abc', '<invalid path>', 0);
-      expectPath('abc', 'abc', 1, [#abc]);
-      expectPath('a.b.c', 'a.b.c', 3, [#a, #b, #c]);
-      expectPath('a.b.c ', 'a.b.c', 3, [#a, #b, #c]);
-      expectPath(' a.b.c', 'a.b.c', 3, [#a, #b, #c]);
-      expectPath('  a.b.c   ', 'a.b.c', 3, [#a, #b, #c]);
-      expectPath('[1].abc', '[1].abc', 2, [1, #abc]);
-      expectPath([#qux], 'qux', 1, [#qux]);
-      expectPath([1, #foo, #bar], '[1].foo.bar', 3, [1, #foo, #bar]);
-      expectPath([1, #foo, 'bar'], '[1].foo["bar"]', 3, [1, #foo, 'bar']);
+      expectPath('abc', 'abc', 1, ["abc"]);
+      expectPath('a.b.c', 'a.b.c', 3, ["a", "b", "c"]);
+      expectPath('a.b.c ', 'a.b.c', 3, ["a", "b", "c"]);
+      expectPath(' a.b.c', 'a.b.c', 3, ["a", "b", "c"]);
+      expectPath('  a.b.c   ', 'a.b.c', 3, ["a", "b", "c"]);
+      expectPath('[1].abc', '[1].abc', 2, [1, "abc"]);
+      expectPath(["qux"], 'qux', 1, ["qux"]);
+      expectPath([1, "foo", "bar"], '[1].foo.bar', 3, [1, "foo", "bar"]);
+      expectPath([1, "foo", 'bar'], '[1].foo["bar"]', 3, [1, "foo", 'bar']);
 
       // From test.js: "path validity" test:
 
       expectPath('', '', 0, []);
       expectPath(' ', '', 0, []);
       expectPath(null, '', 0, []);
-      expectPath('a', 'a', 1, [#a]);
-      expectPath('a.b', 'a.b', 2, [#a, #b]);
-      expectPath('a. b', 'a.b', 2, [#a, #b]);
-      expectPath('a .b', 'a.b', 2, [#a, #b]);
-      expectPath('a . b', 'a.b', 2, [#a, #b]);
-      expectPath(' a . b ', 'a.b', 2, [#a, #b]);
-      expectPath('a[0]', 'a[0]', 2, [#a, 0]);
-      expectPath('a [0]', 'a[0]', 2, [#a, 0]);
-      expectPath('a[0][1]', 'a[0][1]', 3, [#a, 0, 1]);
-      expectPath('a [ 0 ] [ 1 ] ', 'a[0][1]', 3, [#a, 0, 1]);
+      expectPath('a', 'a', 1, ["a"]);
+      expectPath('a.b', 'a.b', 2, ["a", "b"]);
+      expectPath('a. b', 'a.b', 2, ["a", "b"]);
+      expectPath('a .b', 'a.b', 2, ["a", "b"]);
+      expectPath('a . b', 'a.b', 2, ["a", "b"]);
+      expectPath(' a . b ', 'a.b', 2, ["a", "b"]);
+      expectPath('a[0]', 'a[0]', 2, ["a", 0]);
+      expectPath('a [0]', 'a[0]', 2, ["a", 0]);
+      expectPath('a[0][1]', 'a[0][1]', 3, ["a", 0, 1]);
+      expectPath('a [ 0 ] [ 1 ] ', 'a[0][1]', 3, ["a", 0, 1]);
       expectPath('[1234567890] ', '[1234567890]', 1, [1234567890]);
       expectPath(' [1234567890] ', '[1234567890]', 1, [1234567890]);
-      expectPath('opt0', 'opt0', 1, [#opt0]);
+      expectPath('opt0', 'opt0', 1, ["opt0"]);
       // Dart note: Modified to avoid a private Dart symbol:
       expectPath(r'$foo.$bar.baz_', r'$foo.$bar.baz_', 3,
-          [#$foo, #$bar, #baz_]);
+          [r"$foo", r"$bar", "baz_"]);
       // Dart note: this test is different because we treat ["baz"] always as a
       // indexing operation.
-      expectPath('foo["baz"]', 'foo.baz', 2, [#foo, #baz]);
-      expectPath('foo["b\\"az"]', 'foo["b\\"az"]', 2, [#foo, 'b"az']);
-      expectPath("foo['b\\'az']", 'foo["b\'az"]', 2, [#foo, "b'az"]);
-      expectPath([#a, #b], 'a.b', 2, [#a, #b]);
+      expectPath('foo["baz"]', 'foo.baz', 2, ["foo", "baz"]);
+      expectPath('foo["b\\"az"]', 'foo["b\\"az"]', 2, ["foo", 'b"az']);
+      expectPath("foo['b\\'az']", 'foo["b\'az"]', 2, ["foo", "b'az"]);
+      expectPath(["a", "b"], 'a.b', 2, ["a", "b"]);
       expectPath([], '', 0, []);
 
       expectPath('.', '<invalid path>', 0);
@@ -127,7 +127,7 @@ main() => dirtyCheckZone().run(() {
     });
 
     test('hashCode equal', () {
-      var a = new PropertyPath([#foo, 2, #bar]);
+      var a = new PropertyPath(["foo", 2, "bar"]);
       var b = new PropertyPath('foo[2].bar');
       expect(identical(a, b), false, reason: 'only strings cached');
       expect(a, b, reason: 'same paths are equal');
@@ -405,7 +405,7 @@ observePathTests() {
     expect(model._foo, 'hi');
     expect(observer.value, 'hi');
 
-    expect(model.log, [#foo, const Symbol('foo='), #foo]);
+    expect(model.log, ["foo", const Symbol('foo='), "foo"]);
 
     // These shouldn't throw
     observer = new PathObserver(model, 'bar');
@@ -440,7 +440,7 @@ observePathTests() {
     model.log.clear();
   });
 
-  test('regression for TemplateBinding#161', () {
+  test('regression for TemplateBinding"161"', () {
     var model = toObservable({'obj': toObservable({'bar': false})});
     var ob1 = new PathObserver(model, 'obj.bar');
     var called = false;
@@ -685,7 +685,7 @@ class NoSuchMethodModel {
   @reflectable noSuchMethod(Invocation invocation) {
     final name = invocation.memberName;
     log.add(name);
-    if (name == #foo && invocation.isGetter) return _foo;
+    if (name == "foo" && invocation.isGetter) return _foo;
     if (name == const Symbol('foo=')) {
       _foo = invocation.positionalArguments[0];
       return null;
@@ -718,19 +718,19 @@ class TestModel extends ChangeNotifier {
   get a => _a;
 
   void set a(newValue) {
-    _a = notifyPropertyChange(#a, _a, newValue);
+    _a = notifyPropertyChange("a", _a, newValue);
   }
 
   get b => _b;
 
   void set b(newValue) {
-    _b = notifyPropertyChange(#b, _b, newValue);
+    _b = notifyPropertyChange("b", _b, newValue);
   }
 
   get c => _c;
 
   void set c(newValue) {
-    _c = notifyPropertyChange(#c, _c, newValue);
+    _c = notifyPropertyChange("c", _c, newValue);
   }
 }
 

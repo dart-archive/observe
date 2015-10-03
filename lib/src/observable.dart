@@ -4,10 +4,11 @@
 
 library observe.src.observable;
 
+import 'package:polymer/polymer.dart' show JsProxy, PolymerReflectable,jsProxyReflectable;
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:smoke/smoke.dart' as smoke;
+import 'package:reflectable/reflectable.dart';
 import 'package:observe/observe.dart';
 
 // Note: this is an internal library so we can import it from tests.
@@ -28,7 +29,7 @@ import 'dirty_check.dart';
 /// - extend or mixin [ChangeNotifier], and implement change notifications
 ///   manually by calling [notifyPropertyChange] from your setters.
 /// - implement this interface and provide your own implementation.
-abstract class Observable {
+abstract class Observable  {
   /// Performs dirty checking of objects that inherit from [Observable].
   /// This scans all observed objects using mirrors and determines if any fields
   /// have changed. If they have, it delivers the changes for the object.
@@ -36,7 +37,7 @@ abstract class Observable {
 
   StreamController _changes;
 
-  Map<Symbol, Object> _values;
+  Map<String, Object> _values;
   List<ChangeRecord> _records;
 
   /// The stream of change records to this object. Records will be delivered
@@ -59,11 +60,19 @@ abstract class Observable {
     // Register this object for dirty checking purposes.
     registerObservable(this);
 
-    var values = new Map<Symbol, Object>();
+    var values = new Map<String, Object>();
 
     // Note: we scan for @observable regardless of whether the base type
     // actually includes this mixin. While perhaps too inclusive, it lets us
     // avoid complex logic that walks "with" and "implements" clauses.
+
+    InstanceMirror instanceMirror = jsProxyReflectable.reflect(this);
+
+    instanceMirror.type.declarations.values.where((DeclarationMirror decl) => (decl is MethodMirror && (decl as MethodMirror).isGetter) || (decl is VariableMirror)).forEach((DeclarationMirror decl) {
+      String name = decl.simpleName;
+      values[name] = instanceMirror.invokeGetter(decl.simpleName);
+    });
+/*
     var queryOptions = new smoke.QueryOptions(includeInherited: true,
         includeProperties: false, withAnnotations: const [ObservableProperty]);
     for (var decl in smoke.query(this.runtimeType, queryOptions)) {
@@ -72,7 +81,7 @@ abstract class Observable {
       // user code, so we don't need to worry about errors.
       values[name] = smoke.read(this, name);
     }
-
+*/
     _values = values;
   }
 
@@ -113,8 +122,11 @@ abstract class Observable {
     List records = _records;
     _records = null;
 
+    InstanceMirror im = jsProxyReflectable.reflect(this);
+
     _values.forEach((name, oldValue) {
-      var newValue = smoke.read(this, name);
+
+      var newValue = im.invokeGetter(name);
       if (oldValue != newValue) {
         if (records == null) records = [];
         records.add(new PropertyChangeRecord(this, name, oldValue, newValue));
@@ -134,7 +146,7 @@ abstract class Observable {
   /// equal, no change will be recorded.
   ///
   /// For convenience this returns [newValue].
-  notifyPropertyChange(Symbol field, Object oldValue, Object newValue)
+  notifyPropertyChange(String field, Object oldValue, Object newValue)
       => notifyPropertyChangeHelper(this, field, oldValue, newValue);
 
   /// Notify observers of a change.
@@ -159,7 +171,7 @@ abstract class Observable {
 // TODO(jmesserly): remove the instance method and make this top-level method
 // public instead?
 // NOTE: this is not exported publically.
-notifyPropertyChangeHelper(Observable obj, Symbol field, Object oldValue,
+notifyPropertyChangeHelper(Observable obj, String field, Object oldValue,
     Object newValue) {
 
   if (obj.hasObservers && oldValue != newValue) {
