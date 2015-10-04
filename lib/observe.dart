@@ -23,3 +23,4 @@ export 'src/observable_map.dart';
 export 'src/observer_transform.dart';
 export 'src/path_observer.dart' hide getSegmentsOfPropertyPathForTesting;
 export 'src/to_observable.dart';
+export "package:polymer/polymer.dart" show JsProxy,reflectable;
