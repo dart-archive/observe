@@ -158,9 +158,9 @@ class PropertyPath {
     var sb = new StringBuffer();
     bool first = true;
     for (var key in _segments) {
-      if (key is Symbol) {
+      if (key is String) {
         if (!first) sb.write('.');
-        sb.write(smoke.symbolToName(key));
+        sb.write(key);
       } else {
         _formatAccessor(sb, key);
       }
