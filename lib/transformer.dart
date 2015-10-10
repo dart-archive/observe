@@ -377,7 +377,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
   // Metadata is moved to the getter.
 
   String metadata = '';
-  if (fields.variables.length > 1) {
+  if (fields.variables.length > 0) { // always collect metadata because reflectable wants it on setter too
     metadata = member.metadata.map((m) => _getOriginalCode(code, m)).join(' ');
     metadata = '$metadata'; // TODO(dam0vment) put polymer @reflectable here  ?
   }
@@ -403,7 +403,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     final end = _findFieldSeperator(field.endToken.next);
     if (end.type == TokenType.COMMA) code.edit(end.offset, end.end, ';');
 
-    code.edit(end.end, end.end, ' /*@reflectable*/ set $name($type value) { ' // TODO(dam0vm3nt) restore polymer reflectable here ?
+    code.edit(end.end, end.end, ' $metadata  set $name($type value) { ' // TODO(dam0vm3nt) restore polymer reflectable here ?
         '__\$$name = notifyPropertyChange(\'$name\', __\$$name, value); }');
   }
 }
