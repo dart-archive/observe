@@ -28,5 +28,5 @@ class PropertyChangeRecord<T> extends ChangeRecord {
   PropertyChangeRecord(this.object, this.name, this.oldValue, this.newValue) ;
 
   String toString() =>
-      '#<PropertyChangeRecord $simpleName from: $oldValue to: $newValue>';
+      '#<PropertyChangeRecord $name from: $oldValue to: $newValue>';
 }
