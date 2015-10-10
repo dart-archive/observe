@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'package:observe/transformer.dart';
-//import 'package:test/compact_vm_config.dart';
 import 'package:test/test.dart';
 import 'package:stack_trace/stack_trace.dart';
 
