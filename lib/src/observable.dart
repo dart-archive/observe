@@ -4,7 +4,7 @@
 
 library observe.src.observable;
 
-import 'package:polymer/polymer.dart' show jsProxyReflectable;
+
 import 'dart:async';
 import 'dart:collection';
 
@@ -16,6 +16,8 @@ import 'package:observe/observe.dart';
 // strange problems on the VM when I tested out the dirty-checking example
 // above.
 import 'dirty_check.dart';
+
+
 
 /// Represents an object with observable properties. This is used by data in
 /// model-view architectures to notify interested parties of [changes] to the
@@ -66,7 +68,7 @@ abstract class Observable  {
     // actually includes this mixin. While perhaps too inclusive, it lets us
     // avoid complex logic that walks "with" and "implements" clauses.
 
-    InstanceMirror instanceMirror = jsProxyReflectable.reflect(this);
+    InstanceMirror instanceMirror = observableObject.reflect(this);
 
     instanceMirror.type.declarations.values.where((DeclarationMirror decl) => ((decl is MethodMirror && (decl as MethodMirror).isGetter) || (decl is VariableMirror))&&(decl.metadata.any((x)=>x is ObservableProperty))).forEach((DeclarationMirror decl) {
       String name = decl.simpleName;
@@ -122,7 +124,7 @@ abstract class Observable  {
     List records = _records;
     _records = null;
 
-    InstanceMirror im = jsProxyReflectable.reflect(this);
+    InstanceMirror im = observableObject.reflect(this);
 
     _values.forEach((name, oldValue) {
 

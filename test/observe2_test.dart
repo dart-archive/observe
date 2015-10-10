@@ -9,12 +9,9 @@ import 'package:observe/src/dirty_check.dart' as dirty_check;
 import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 import "package:reflectable/reflectable.dart";
-import 'package:polymer/src/common/js_proxy.dart' show jsProxyReflectable;
-
 main() {
   _tests();
 }
-
 
 class MyModel extends Observable {
   @observable String field1;
@@ -39,15 +36,16 @@ void _tests() {
   group("basic tests",(){
     test("reflect works",() {
       MyModel m = new MyModel("uno");
-      InstanceMirror im =jsProxyReflectable.reflect(m);
+      InstanceMirror im =observableObject.reflect(m);
       expect(im.type.simpleName,"MyModel");
       expect(im.type.declarations,contains("field1"));
       expect(im.invokeGetter("field1"),"uno");
     });
 
+
     test("reflect works again",() {
       MyModel2 m = new MyModel2("uno");
-      InstanceMirror im =jsProxyReflectable.reflect(m);
+      InstanceMirror im =observableObject.reflect(m);
       expect(im.type.simpleName,"MyModel2");
       expect(im.type.declarations,contains("field1"));
       expect(im.invokeGetter("field1"),"uno");

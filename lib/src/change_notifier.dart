@@ -8,7 +8,7 @@ import 'dart:async';
 import 'dart:collection' show UnmodifiableListView;
 import 'package:observe/observe.dart';
 import 'package:observe/src/observable.dart' show notifyPropertyChangeHelper;
-export "package:polymer/src/common/js_proxy.dart" show jsProxyReflectable;
+
 
 /// Mixin and base class for implementing an [Observable] object that performs
 /// its own change notifications, and does not need to be considered by
@@ -16,6 +16,9 @@ export "package:polymer/src/common/js_proxy.dart" show jsProxyReflectable;
 ///
 /// When a field, property, or indexable item is changed, a derived class should
 /// call [notifyPropertyChange]. See that method for an example.
+///
+///
+@observableObject
 abstract class ChangeNotifier implements Observable {
   StreamController _changes;
   List<ChangeRecord> _records;

@@ -11,8 +11,6 @@ import 'dart:math' show min;
 import 'package:logging/logging.dart' show Logger, Level;
 import 'package:observe/observe.dart';
 import 'package:reflectable/reflectable.dart';
-import "package:polymer/polymer.dart" show jsProxyReflectable;
-
 import 'package:utf/utf.dart' show stringToCodepoints;
 
 /// A data-bound path starting from a view-model or model object, for example
@@ -293,7 +291,7 @@ _getObjectProperty(object, property) {
       return object[property];
     }
     try {
-      return jsProxyReflectable.reflect(object).invokeGetter(property);
+      return observableObject.reflect(object).invokeGetter(property);
     } on NoSuchMethodError catch (e) {
       // Rethrow, unless the type implements noSuchMethod, in which case we
       // interpret the exception as a signal that the method was not found.
@@ -324,7 +322,7 @@ bool _setObjectProperty(object, property, value) {
       return true;
     }
     try {
-      jsProxyReflectable.reflect(object).invokeSetter(property,value);
+      observableObject.reflect(object).invokeSetter(property,value);
       return true;
     } on NoSuchMethodError catch (e, s) {
       if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;

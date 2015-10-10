@@ -161,9 +161,9 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
     if (id.name == 'Observable') {
       if (cls.withClause==null) {
-        code.edit(id.offset, id.end, 'JsProxy with ChangeNotifier');
+        code.edit(id.offset, id.end, '/*JsProxy with*/ ChangeNotifier'); // TODO(dam0vm3nt) Put also jsProxy here so that we do not have to do it again?
       } else {
-        code.edit(cls.withClause.mixinTypes[0].offset,cls.withClause.mixinTypes[0].offset,"JsProxy");
+       /* code.edit(cls.withClause.mixinTypes[0].offset,cls.withClause.mixinTypes[0].offset,"JsProxy,");*/ // TODO(dam0vm3nt) put again jsProxy here?
       }
       explicitObservable = true;
     } else if (id.name == 'ChangeNotifier') {
@@ -184,7 +184,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
         if (_getSimpleIdentifier(cls.extendsClause.superclass.name)=='PolymerElement') {
           code.edit(id.offset, id.end, 'ChangeNotifier');
         } else {
-          code.edit(id.offset, id.end, 'ChangeNotifier,JsProxy');
+          code.edit(id.offset, id.end, 'ChangeNotifier/*,JsProxy*/'); // TODO(dam0vm3nt) : put again here JsProxy ?
         }
         explicitObservable = true;
         break;
@@ -379,7 +379,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
   String metadata = '';
   if (fields.variables.length > 1) {
     metadata = member.metadata.map((m) => _getOriginalCode(code, m)).join(' ');
-    metadata = '@reflectable $metadata';
+    metadata = '$metadata'; // TODO(dam0vment) put polymer @reflectable here  ?
   }
 
   for (int i = 0; i < fields.variables.length; i++) {
@@ -392,7 +392,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     // we can reuse the metadata and type annotation.
     if (i == 0) {
       final begin = member.metadata.first.offset;
-      code.edit(begin, begin, '@reflectable ');
+      //code.edit(begin, begin, '@reflectable '); // TODO(dam0vm3nt) restore polymer reflectable here ?
     } else {
       beforeInit = '$metadata $type $beforeInit';
     }
@@ -403,7 +403,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     final end = _findFieldSeperator(field.endToken.next);
     if (end.type == TokenType.COMMA) code.edit(end.offset, end.end, ';');
 
-    code.edit(end.end, end.end, ' @reflectable set $name($type value) { '
+    code.edit(end.end, end.end, ' /*@reflectable*/ set $name($type value) { ' // TODO(dam0vm3nt) restore polymer reflectable here ?
         '__\$$name = notifyPropertyChange(\'$name\', __\$$name, value); }');
   }
 }

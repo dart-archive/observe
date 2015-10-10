@@ -4,8 +4,7 @@
 
 library observe.src.metadata;
 
-import "package:polymer/polymer.dart" show PolymerReflectable;
-export "package:polymer/polymer.dart" show reflectable;
+import "package:reflectable/reflectable.dart";
 
 /// Use `@observable` to make a field automatically observable, or to indicate
 /// that a property is observable. This only works on classes that extend or
@@ -23,9 +22,18 @@ const ObservableProperty observable = const ObservableProperty();
 //     If needed, you can subclass this to create another annotation that will
 //     also be treated as observable.
 // Note: observable properties imply reflectable.
-class ObservableProperty extends PolymerReflectable {
+class ObservableProperty {
   const ObservableProperty();
 }
+
+class ObservableObject extends Reflectable {
+  const ObservableObject() : super.fromList(const [
+    const InstanceInvokeMetaCapability(ObservableProperty),
+    subtypeQuantifyCapability,typeCapability,declarationsCapability
+  ]);
+}
+
+const observableObject = const ObservableObject();
 
 
 /// This can be used to retain any properties that you wish to access with
