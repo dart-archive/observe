@@ -161,7 +161,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
     if (id.name == 'Observable') {
       if (cls.withClause==null) {
-        code.edit(id.offset, id.end, '/*JsProxy with*/ ChangeNotifier'); // TODO(dam0vm3nt) Put also jsProxy here so that we do not have to do it again?
+        code.edit(id.offset, id.end, 'ChangeNotifier'); // TODO(dam0vm3nt) Put also jsProxy here so that we do not have to do it again?
       } else {
        /* code.edit(cls.withClause.mixinTypes[0].offset,cls.withClause.mixinTypes[0].offset,"JsProxy,");*/ // TODO(dam0vm3nt) put again jsProxy here?
       }
@@ -184,7 +184,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
         if (_getSimpleIdentifier(cls.extendsClause.superclass.name)=='PolymerElement') {
           code.edit(id.offset, id.end, 'ChangeNotifier');
         } else {
-          code.edit(id.offset, id.end, 'ChangeNotifier/*,JsProxy*/'); // TODO(dam0vm3nt) : put again here JsProxy ?
+          code.edit(id.offset, id.end, 'ChangeNotifier'); // TODO(dam0vm3nt) : put again here JsProxy ?
         }
         explicitObservable = true;
         break;

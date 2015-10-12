@@ -70,7 +70,7 @@ abstract class Observable  {
 
     InstanceMirror instanceMirror = observableObject.reflect(this);
 
-    instanceMirror.type.declarations.values.where((DeclarationMirror decl) => ((decl is MethodMirror && (decl as MethodMirror).isGetter) || (decl is VariableMirror))&&(decl.metadata.any((x)=>x is ObservableProperty))).forEach((DeclarationMirror decl) {
+    instanceMirror.type.declarations.values.where((DeclarationMirror decl) => ((decl is MethodMirror && (decl as MethodMirror).isGetter) || (decl is VariableMirror))).forEach((DeclarationMirror decl) {
       String name = decl.simpleName;
       values[name] = instanceMirror.invokeGetter(decl.simpleName);
     });

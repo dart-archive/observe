@@ -18,7 +18,6 @@ import 'package:observe/src/observable.dart' show notifyPropertyChangeHelper;
 /// call [notifyPropertyChange]. See that method for an example.
 ///
 ///
-@observableObject
 abstract class ChangeNotifier implements Observable {
   StreamController _changes;
   List<ChangeRecord> _records;

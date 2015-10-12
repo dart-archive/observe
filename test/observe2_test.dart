@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'package:logging/logging.dart';
-import 'package:observe/observe.dart';
+import 'package:observe/standalone.dart';
 import 'package:observe/src/dirty_check.dart' as dirty_check;
 import 'package:test/test.dart';
 import 'observe_test_utils.dart';

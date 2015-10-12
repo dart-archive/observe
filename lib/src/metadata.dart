@@ -6,10 +6,28 @@ library observe.src.metadata;
 
 import "package:reflectable/reflectable.dart";
 
-/// Use `@observable` to make a field automatically observable, or to indicate
-/// that a property is observable. This only works on classes that extend or
-/// mix in `Observable`.
-const ObservableProperty observable = const ObservableProperty();
+class ScopeMetaReflector extends Reflectable {
+  const ScopeMetaReflector()
+  : super(const TopLevelInvokeMetaCapability(ScopeMetaReflector),
+  declarationsCapability, libraryCapability);
+
+  Set<Reflectable> reflectablesOfScope(String scope) {
+    Set<Reflectable> result = new Set<Reflectable>();
+    for (LibraryMirror library in libraries.values) {
+      for (DeclarationMirror declaration in library.declarations.values) {
+        result.addAll(library.invoke(declaration.simpleName, [scope]));
+      }
+    }
+    return result;
+  }
+}
+/// Mirror system to be used.
+
+final Reflectable observableObject =
+  const ScopeMetaReflector().reflectablesOfScope("observe").first;
+
+
+
 
 /// An annotation that is used to make a property observable.
 /// Normally this is used via the [observable] constant, for example:
@@ -26,38 +44,7 @@ class ObservableProperty {
   const ObservableProperty();
 }
 
-class ObservableObject extends Reflectable {
-  const ObservableObject() : super.fromList(const [
-    const InstanceInvokeMetaCapability(ObservableProperty),
-    subtypeQuantifyCapability,typeCapability,declarationsCapability
-  ]);
-}
-
-const observableObject = const ObservableObject();
+const ObservableProperty observable = const ObservableProperty();
 
 
-/// This can be used to retain any properties that you wish to access with
-/// Dart's mirror system. If you import `package:observe/mirrors_used.dart`, all
-/// classes or members annotated with `@reflectable` wil be preserved by dart2js
-/// during compilation.  This is necessary to make the member visible to
-/// `PathObserver`, or similar systems, once the code is deployed, if you are
-/// not doing a different kind of code-generation for your app. If you are using
-/// polymer, you most likely don't need to use this annotation anymore.
-//const Reflectable reflectable = const Reflectable();
 
-/// An annotation that is used to make a type or member reflectable. This makes
-/// it available to `PathObserver` at runtime. For example:
-///
-///     @reflectable
-///     class Monster extends ChangeNotifier {
-///       int _health;
-///       int get health => _health;
-///       ...
-///     }
-///     ...
-///       // This will work even if the code has been tree-shaken/minified:
-///       final monster = new Monster();
-///       new PathObserver(monster, 'health').changes.listen(...);
-//class Reflectable {
-//  const Reflectable();
-//}
