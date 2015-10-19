@@ -297,7 +297,7 @@ _getObjectProperty(object, property) {
       // interpret the exception as a signal that the method was not found.
       // Dart note: getting invalid properties is an error, unlike in JS where
       // it returns undefined.
-      if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;
+      /*if (!smoke.hasNoSuchMethod(object.runtimeType))*/ rethrow;
     }
   }
 
@@ -325,7 +325,7 @@ bool _setObjectProperty(object, property, value) {
       observableObject.reflect(object).invokeSetter(property,value);
       return true;
     } on NoSuchMethodError catch (e, s) {
-      if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;
+      /*if (!smoke.hasNoSuchMethod(object.runtimeType))*/ rethrow;
     }
   }
 
@@ -724,18 +724,19 @@ abstract class _Observer extends Bindable {
   /// The number of arguments the subclass will pass to [_report].
   int get _reportArgumentCount;
 
-  open(callback) {
+  // BREAKING CHANGE: REQUIRED num args for the callback
+  open(callback,{numArgs:1}) {
     if (_isOpen || _isClosed) {
       throw new StateError('Observer has already been opened.');
     }
 
-    if (smoke.minArgs(callback) > _reportArgumentCount) {
+    if (numArgs > _reportArgumentCount) {
       throw new ArgumentError('callback should take $_reportArgumentCount or '
           'fewer arguments');
     }
 
     _notifyCallback = callback;
-    _notifyArgumentCount = min(_reportArgumentCount, smoke.maxArgs(callback));
+    _notifyArgumentCount = min(_reportArgumentCount, numArgs);
 
     _connect();
     _state = _OPENED;
