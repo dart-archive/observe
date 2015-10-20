@@ -279,8 +279,6 @@ _getObjectProperty(object, property) {
       return object[property];
     }
   } else if (property is String) {
-    return object[property];
-  } else if (property is Symbol) {
     // Support indexer if available, e.g. Maps or polymer_expressions Scope.
     // This is the default syntax used by polymer/nodebind and
     // polymer/observe-js PathObserver.
