@@ -161,9 +161,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
     if (id.name == 'Observable') {
       if (cls.withClause==null) {
-        code.edit(id.offset, id.end, 'ChangeNotifier'); // TODO(dam0vm3nt) Put also jsProxy here so that we do not have to do it again?
-      } else {
-       /* code.edit(cls.withClause.mixinTypes[0].offset,cls.withClause.mixinTypes[0].offset,"JsProxy,");*/ // TODO(dam0vm3nt) put again jsProxy here?
+        code.edit(id.offset, id.end, 'ChangeNotifier');
       }
       explicitObservable = true;
     } else if (id.name == 'ChangeNotifier') {
@@ -181,11 +179,7 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     for (var type in cls.withClause.mixinTypes) {
       var id = _getSimpleIdentifier(type.name);
       if (id.name == 'Observable') {
-        if (_getSimpleIdentifier(cls.extendsClause.superclass.name)=='PolymerElement') {
-          code.edit(id.offset, id.end, 'ChangeNotifier');
-        } else {
-          code.edit(id.offset, id.end, 'ChangeNotifier'); // TODO(dam0vm3nt) : put again here JsProxy ?
-        }
+        code.edit(id.offset, id.end, 'ChangeNotifier');
         explicitObservable = true;
         break;
       } else if (id.name == 'ChangeNotifier') {
@@ -236,7 +230,8 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   // If nothing was @observable, bail.
   if (instanceFields.length == 0) return;
 
-  if (!explicitObservable) _mixinObservable(cls, code);
+  // Avoid adding not wanted extends or mixins to make it possible to use this on mixins
+  //if (!explicitObservable) _mixinObservable(cls, code);
 
   // Fix initializers, because they aren't allowed to call the setter.
   for (var member in cls.members) {
