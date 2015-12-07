@@ -269,6 +269,16 @@ _runTests() {
       });
     });
 
+    test('sort or 2 elements from reaction fn', () {
+      ObservableList list = toObservable([3, 1]);
+      var futureSub = list.listChanges.listen(_reSort(list));
+      list.sort();
+      expect(list, [1, 3]);
+      // Delay clean up, because terminating listeners immediately hides bug.
+      new Future.delayed(
+          new Duration(milliseconds: 1), () => futureSub.cancel());
+    });
+    
     test('clear', () {
       list.clear();
       expect(list, []);
@@ -286,9 +296,17 @@ _runTests() {
 }
 
 ObservableList list;
+int _loopCounter = 0;
 
 _lengthChange(int oldValue, int newValue) =>
     new PropertyChangeRecord(list, #length, oldValue, newValue);
 
 _change(index, {removed: const [], addedCount: 0}) => new ListChangeRecord(
     list, index, removed: removed, addedCount: addedCount);
+
+Function _reSort(list) => (changes) {
+  if (_loopCounter++ > 50) {
+    throw 'INFINITE LOOP';
+  }
+  list.sort();
+};
