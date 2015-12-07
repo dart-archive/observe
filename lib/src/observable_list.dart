@@ -91,7 +91,7 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
 
   @reflectable void operator []=(int index, E value) {
     var oldValue = _list[index];
-    if (hasListObservers) {
+    if (hasListObservers && oldValue != value) {
       _recordChange(new ListChangeRecord(this, index, addedCount: 1,
           removed: [oldValue]));
     }

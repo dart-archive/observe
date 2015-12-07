@@ -269,6 +269,19 @@ _runTests() {
       });
     });
 
+    test('sort of 2 elements', () {
+      var list = toObservable([3, 1]);
+      // Dummy listener to record changes.
+      // TODO(jmesserly): should we just record changes always, to support the sync api?
+      sub = list.listChanges.listen((records) => null);
+      list.sort();
+      expect(list.deliverListChanges(), true);
+      list.sort();
+      expect(list.deliverListChanges(), false);
+      list.sort();
+      expect(list.deliverListChanges(), false);
+    });
+    
     test('clear', () {
       list.clear();
       expect(list, []);
@@ -292,3 +305,4 @@ _lengthChange(int oldValue, int newValue) =>
 
 _change(index, {removed: const [], addedCount: 0}) => new ListChangeRecord(
     list, index, removed: removed, addedCount: addedCount);
+
