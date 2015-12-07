@@ -269,14 +269,17 @@ _runTests() {
       });
     });
 
-    test('sort or 2 elements from reaction fn', () {
-      ObservableList list = toObservable([3, 1]);
-      var futureSub = list.listChanges.listen(_reSort(list));
+    test('sort of 2 elements', () {
+      var list = toObservable([3, 1]);
+      // Dummy listener to record changes.
+      // TODO(jmesserly): should we just record changes always, to support the sync api?
+      sub = list.listChanges.listen((records) => null);
       list.sort();
-      expect(list, [1, 3]);
-      // Delay clean up, because terminating listeners immediately hides bug.
-      new Future.delayed(
-          new Duration(milliseconds: 1), () => futureSub.cancel());
+      expect(list.deliverListChanges(), true);
+      list.sort();
+      expect(list.deliverListChanges(), false);
+      list.sort();
+      expect(list.deliverListChanges(), false);
     });
     
     test('clear', () {
