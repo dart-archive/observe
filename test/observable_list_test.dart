@@ -299,7 +299,6 @@ _runTests() {
 }
 
 ObservableList list;
-int _loopCounter = 0;
 
 _lengthChange(int oldValue, int newValue) =>
     new PropertyChangeRecord(list, #length, oldValue, newValue);
@@ -307,9 +306,3 @@ _lengthChange(int oldValue, int newValue) =>
 _change(index, {removed: const [], addedCount: 0}) => new ListChangeRecord(
     list, index, removed: removed, addedCount: addedCount);
 
-Function _reSort(list) => (changes) {
-  if (_loopCounter++ > 50) {
-    throw 'INFINITE LOOP';
-  }
-  list.sort();
-};
