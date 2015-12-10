@@ -67,6 +67,7 @@ class ObservableTransformer extends Transformer {
   }
 
   Future apply(Transform transform) {
+
     return transform.primaryInput.readAsString().then((content) {
       // Do a quick string check to determine if this is this file even
       // plausibly might need to be transformed. If not, we can avoid an
@@ -135,9 +136,9 @@ bool _hasObservable(AnnotatedNode node) =>
 // that is expensive in analyzer, so it isn't feasible yet.
 bool _isObservableAnnotation(Annotation node) =>
     _isAnnotationContant(node, 'observable') ||
-        _isAnnotationContant(node, 'published') ||
+        _isAnnotationContant(node, 'reflectable') ||
         _isAnnotationType(node, 'ObservableProperty') ||
-        _isAnnotationType(node, 'PublishedProperty');
+        _isAnnotationType(node, 'PolymerReflectable');
 
 bool _isAnnotationContant(Annotation m, String name) =>
     m.name.name == name && m.constructorName == null && m.arguments == null;
@@ -159,7 +160,9 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   if (cls.extendsClause != null) {
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
     if (id.name == 'Observable') {
-      code.edit(id.offset, id.end, 'ChangeNotifier');
+      if (cls.withClause==null) {
+        code.edit(id.offset, id.end, 'ChangeNotifier');
+      }
       explicitObservable = true;
     } else if (id.name == 'ChangeNotifier') {
       explicitObservable = true;
@@ -227,7 +230,8 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   // If nothing was @observable, bail.
   if (instanceFields.length == 0) return;
 
-  if (!explicitObservable) _mixinObservable(cls, code);
+  // Avoid adding not wanted extends or mixins to make it possible to use this on mixins
+  //if (!explicitObservable) _mixinObservable(cls, code);
 
   // Fix initializers, because they aren't allowed to call the setter.
   for (var member in cls.members) {
@@ -368,9 +372,9 @@ void _transformFields(SourceFile file, FieldDeclaration member,
   // Metadata is moved to the getter.
 
   String metadata = '';
-  if (fields.variables.length > 1) {
+  if (fields.variables.length > 0) { // always collect metadata because reflectable wants it on setter too
     metadata = member.metadata.map((m) => _getOriginalCode(code, m)).join(' ');
-    metadata = '@reflectable $metadata';
+    metadata = '$metadata'; // TODO(dam0vment) put polymer @reflectable here  ?
   }
 
   for (int i = 0; i < fields.variables.length; i++) {
@@ -383,7 +387,7 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     // we can reuse the metadata and type annotation.
     if (i == 0) {
       final begin = member.metadata.first.offset;
-      code.edit(begin, begin, '@reflectable ');
+      //code.edit(begin, begin, '@reflectable '); // TODO(dam0vm3nt) restore polymer reflectable here ?
     } else {
       beforeInit = '$metadata $type $beforeInit';
     }
@@ -394,8 +398,8 @@ void _transformFields(SourceFile file, FieldDeclaration member,
     final end = _findFieldSeperator(field.endToken.next);
     if (end.type == TokenType.COMMA) code.edit(end.offset, end.end, ';');
 
-    code.edit(end.end, end.end, ' @reflectable set $name($type value) { '
-        '__\$$name = notifyPropertyChange(#$name, __\$$name, value); }');
+    code.edit(end.end, end.end, ' $metadata  set $name($type value) { ' // TODO(dam0vm3nt) restore polymer reflectable here ?
+        '__\$$name = notifyPropertyChange(\'$name\', __\$$name, value); }');
   }
 }
 
@@ -413,4 +417,4 @@ Token _findFieldSeperator(Token token) {
 // to do this would be to switch to use the analyzer to resolve whether
 // annotations are subtypes of ObservableProperty.
 final observableMatcher =
-    new RegExp("@(published|observable|PublishedProperty|ObservableProperty)");
+    new RegExp("@(reflectable|observable|PolymerReflectable|ObservableProperty)");

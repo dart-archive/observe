@@ -1,19 +1,15 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/dirty_check.dart' as dirty_check;
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 
-import 'package:observe/mirrors_used.dart'; // make test smaller.
-import 'package:smoke/mirrors.dart';
-
 main() {
-  useMirrors();
   dirtyCheckZone().run(_tests);
 }
 
@@ -218,7 +214,7 @@ void _observeTests(createModel(x)) {
       // Verify that mutation operations on the list fail:
 
       expect(() {
-        records[0] = new PropertyChangeRecord(t, #value, 0, 1);
+        records[0] = new PropertyChangeRecord(t, "value", 0, 1);
       }, throwsUnsupportedError);
 
       expect(() { records.clear(); }, throwsUnsupportedError);
@@ -231,7 +227,7 @@ void _observeTests(createModel(x)) {
     var t = createModel(123);
     var records = [];
     subs.add(t.changes.listen((r) { records.addAll(r); }));
-    t.notifyChange(new PropertyChangeRecord(t, #value, 123, 42));
+    t.notifyChange(new PropertyChangeRecord(t, "value", 123, 42));
 
     return new Future(() {
       expectPropertyChanges(records, 1);
@@ -243,7 +239,7 @@ void _observeTests(createModel(x)) {
     var t = createModel(123);
     var records = null;
     subs.add(t.changes.listen((r) { records = r; }));
-    expect(t.notifyPropertyChange(#value, t.value, 42), 42,
+    expect(t.notifyPropertyChange("value", t.value, 42), 42,
         reason: 'notifyPropertyChange returns newValue');
 
     return new Future(() {
@@ -258,7 +254,7 @@ expectPropertyChanges(records, int number) {
   for (var record in records) {
     expect(record is PropertyChangeRecord, true, reason:
         'record should be PropertyChangeRecord');
-    expect((record as PropertyChangeRecord).name, #value, reason:
+    expect((record as PropertyChangeRecord).name, "value", reason:
         'record should indicate a change to the "value" property');
   }
 }

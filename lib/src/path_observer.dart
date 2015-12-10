@@ -10,8 +10,7 @@ import 'dart:math' show min;
 
 import 'package:logging/logging.dart' show Logger, Level;
 import 'package:observe/observe.dart';
-import 'package:smoke/smoke.dart' as smoke;
-
+import 'package:reflectable/reflectable.dart';
 import 'package:utf/utf.dart' show stringToCodepoints;
 
 /// A data-bound path starting from a view-model or model object, for example
@@ -157,9 +156,9 @@ class PropertyPath {
     var sb = new StringBuffer();
     bool first = true;
     for (var key in _segments) {
-      if (key is Symbol) {
+      if (key is String) {
         if (!first) sb.write('.');
-        sb.write(smoke.symbolToName(key));
+        sb.write(key);
       } else {
         _formatAccessor(sb, key);
       }
@@ -261,7 +260,6 @@ bool _changeRecordMatches(record, key) {
     return (record as PropertyChangeRecord).name == key;
   }
   if (record is MapChangeRecord) {
-    if (key is Symbol) key = smoke.symbolToName(key);
     return (record as MapChangeRecord).key == key;
   }
   return false;
@@ -271,7 +269,7 @@ bool _changeRecordMatches(record, key) {
 /// the map. We exclude methods ('containsValue', 'containsKey', 'putIfAbsent',
 /// 'addAll', 'remove', 'clear', 'forEach') because there is no use in reading
 /// them as part of path-observer segments.
-const _MAP_PROPERTIES = const [#keys, #values, #length, #isEmpty, #isNotEmpty];
+const _MAP_PROPERTIES = const ["keys", "values", "length", "isEmpty", "isNotEmpty"];
 
 _getObjectProperty(object, property) {
   if (object == null) return null;
@@ -281,8 +279,6 @@ _getObjectProperty(object, property) {
       return object[property];
     }
   } else if (property is String) {
-    return object[property];
-  } else if (property is Symbol) {
     // Support indexer if available, e.g. Maps or polymer_expressions Scope.
     // This is the default syntax used by polymer/nodebind and
     // polymer/observe-js PathObserver.
@@ -290,16 +286,16 @@ _getObjectProperty(object, property) {
     // whether the type practically implements the indexer API
     // (smoke.hasInstanceMethod(type, const Symbol('[]')))?
     if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
-      return object[smoke.symbolToName(property)];
+      return object[property];
     }
     try {
-      return smoke.read(object, property);
+      return observableObject.reflect(object).invokeGetter(property);
     } on NoSuchMethodError catch (e) {
       // Rethrow, unless the type implements noSuchMethod, in which case we
       // interpret the exception as a signal that the method was not found.
       // Dart note: getting invalid properties is an error, unlike in JS where
       // it returns undefined.
-      if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;
+      /*if (!smoke.hasNoSuchMethod(object.runtimeType))*/ rethrow;
     }
   }
 
@@ -317,17 +313,17 @@ bool _setObjectProperty(object, property, value) {
       object[property] = value;
       return true;
     }
-  } else if (property is Symbol) {
+  } else if (property is String) {
     // Support indexer if available, e.g. Maps or polymer_expressions Scope.
     if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
-      object[smoke.symbolToName(property)] = value;
+      object[property] = value;
       return true;
     }
     try {
-      smoke.write(object, property, value);
+      observableObject.reflect(object).invokeSetter(property,value);
       return true;
     } on NoSuchMethodError catch (e, s) {
-      if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;
+      /*if (!smoke.hasNoSuchMethod(object.runtimeType))*/ rethrow;
     }
   }
 
@@ -468,7 +464,7 @@ class _PathParser {
     // Dart note: we store the keys with different types, rather than
     // parsing/converting things later in toString.
     if (_isIdent(key)) {
-      keys.add(smoke.nameToSymbol(key));
+      keys.add(key);
     } else {
       var index = int.parse(key, radix: 10, onError: (_) => null);
       keys.add(index != null ? index : key);
@@ -726,18 +722,19 @@ abstract class _Observer extends Bindable {
   /// The number of arguments the subclass will pass to [_report].
   int get _reportArgumentCount;
 
-  open(callback) {
+  // BREAKING CHANGE: REQUIRED num args for the callback
+  open(callback,{numArgs:1}) {
     if (_isOpen || _isClosed) {
       throw new StateError('Observer has already been opened.');
     }
 
-    if (smoke.minArgs(callback) > _reportArgumentCount) {
+    if (numArgs > _reportArgumentCount) {
       throw new ArgumentError('callback should take $_reportArgumentCount or '
           'fewer arguments');
     }
 
     _notifyCallback = callback;
-    _notifyArgumentCount = min(_reportArgumentCount, smoke.maxArgs(callback));
+    _notifyArgumentCount = min(_reportArgumentCount, numArgs);
 
     _connect();
     _state = _OPENED;

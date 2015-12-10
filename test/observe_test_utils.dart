@@ -1,13 +1,12 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+@Skip("Until ported")
 library observe.test.observe_test_utils;
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:observe/mirrors_used.dart'; // to make tests smaller
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 export 'package:observe/src/dirty_check.dart' show dirtyCheckZone;
 
 /// A small method to help readability. Used to cause the next "then" in a chain

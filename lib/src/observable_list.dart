@@ -67,9 +67,9 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   bool get hasListObservers =>
       _listChanges != null && _listChanges.hasListener;
 
-  @reflectable int get length => _list.length;
+ int get length => _list.length;
 
-  @reflectable set length(int value) {
+  set length(int value) {
     int len = _list.length;
     if (len == value) return;
 
@@ -87,9 +87,9 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     _list.length = value;
   }
 
-  @reflectable E operator [](int index) => _list[index];
+  /*@reflectable*/ E operator [](int index) => _list[index];
 
-  @reflectable void operator []=(int index, E value) {
+  /*@reflectable*/ void operator []=(int index, E value) {
     var oldValue = _list[index];
     if (hasListObservers && oldValue != value) {
       _recordChange(new ListChangeRecord(this, index, addedCount: 1,
@@ -99,8 +99,8 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   }
 
   // Forwarders so we can reflect on the properties.
-  @reflectable bool get isEmpty => super.isEmpty;
-  @reflectable bool get isNotEmpty => super.isNotEmpty;
+  /*@reflectable*/ bool get isEmpty => super.isEmpty;
+  /*@reflectable*/ bool get isNotEmpty => super.isNotEmpty;
 
   // TODO(jmesserly): should we support first/last/single? They're kind of
   // dangerous to use in a path because they throw exceptions. Also we'd need
@@ -242,9 +242,9 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   }
 
   void _notifyChangeLength(int oldValue, int newValue) {
-    notifyPropertyChange(#length, oldValue, newValue);
-    notifyPropertyChange(#isEmpty, oldValue == 0, newValue == 0);
-    notifyPropertyChange(#isNotEmpty, oldValue != 0, newValue != 0);
+    notifyPropertyChange("length", oldValue, newValue);
+    notifyPropertyChange("isEmpty", oldValue == 0, newValue == 0);
+    notifyPropertyChange("isNotEmpty", oldValue != 0, newValue != 0);
   }
 
   /// Deprecated. Name had a typo, use [discardListChanges] instead.

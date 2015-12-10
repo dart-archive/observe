@@ -45,7 +45,7 @@ class ObservableLocationHash extends ChangeNotifier {
   void _notifyHashChange(_) {
     var oldValue = _currentHash;
     _currentHash = hash;
-    notifyPropertyChange(#hash, oldValue, _currentHash);
+    notifyPropertyChange("hash", oldValue, _currentHash);
   }
 }
 

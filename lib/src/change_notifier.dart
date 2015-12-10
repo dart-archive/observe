@@ -9,12 +9,15 @@ import 'dart:collection' show UnmodifiableListView;
 import 'package:observe/observe.dart';
 import 'package:observe/src/observable.dart' show notifyPropertyChangeHelper;
 
+
 /// Mixin and base class for implementing an [Observable] object that performs
 /// its own change notifications, and does not need to be considered by
 /// [Observable.dirtyCheck].
 ///
 /// When a field, property, or indexable item is changed, a derived class should
 /// call [notifyPropertyChange]. See that method for an example.
+///
+///
 abstract class ChangeNotifier implements Observable {
   StreamController _changes;
   List<ChangeRecord> _records;
@@ -66,7 +69,7 @@ abstract class ChangeNotifier implements Observable {
   ///     @reflectable set myField(value) {
   ///       _myField = notifyPropertyChange(#myField, _myField, value);
   ///     }
-  notifyPropertyChange(Symbol field, Object oldValue, Object newValue)
+  notifyPropertyChange(String field, Object oldValue, Object newValue)
       => notifyPropertyChangeHelper(this, field, oldValue, newValue);
 
   void notifyChange(ChangeRecord record) {
