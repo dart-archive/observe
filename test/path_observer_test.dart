@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:observe/src/path_observer.dart'
     show getSegmentsOfPropertyPathForTesting,
          observerSentinelForTesting;
 
 import 'observe_test_utils.dart';
 
-import 'package:observe/mirrors_used.dart'; // make test smaller.
+import 'package:observe/mirrors_used.dart' as mu; // make test smaller.
 import 'package:smoke/mirrors.dart';
 
 // This file contains code ported from:
@@ -19,6 +19,8 @@ import 'package:smoke/mirrors.dart';
 // Dart note: getting invalid properties is an error, unlike in JS where it
 // returns undefined. This difference comes up where we check for _throwsNSM in
 // the tests below.
+//
+/// Uses [mu].
 main() => dirtyCheckZone().run(() {
   useMirrors();
 

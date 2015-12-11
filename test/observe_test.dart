@@ -6,12 +6,13 @@ import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/dirty_check.dart' as dirty_check;
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 
-import 'package:observe/mirrors_used.dart'; // make test smaller.
+import 'package:observe/mirrors_used.dart' as mu; // make test smaller.
 import 'package:smoke/mirrors.dart';
 
+/// Uses [mu].
 main() {
   useMirrors();
   dirtyCheckZone().run(_tests);

@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'observe_test_utils.dart';
 
 main() => dirtyCheckZone().run(_runTests);

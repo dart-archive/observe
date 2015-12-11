@@ -6,14 +6,16 @@ library observe.test.observe_test_utils;
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:observe/mirrors_used.dart'; // to make tests smaller
-import 'package:unittest/unittest.dart';
+import 'package:observe/mirrors_used.dart' as mu; // to make tests smaller
+import 'package:test/test.dart';
 export 'package:observe/src/dirty_check.dart' show dirtyCheckZone;
 
 /// A small method to help readability. Used to cause the next "then" in a chain
 /// to happen in the next microtask:
 ///
 ///     future.then(newMicrotask).then(...)
+///
+/// Uses [mu].
 newMicrotask(_) => new Future.value();
 
 // TODO(jmesserly): use matchers when we have a way to compare ChangeRecords.
