@@ -333,20 +333,24 @@ observePathTests() {
       model.a.b.c = 'hello, mom';
 
       expect(lastValue, null);
+      Observable.dirtyCheck();
       return new Future(() {
         expect(lastValue, 'hello, mom');
 
         model.a.b = createModel()..c = 'hello, dad';
+        Observable.dirtyCheck();
       }).then(newMicrotask).then((_) {
         expect(lastValue, 'hello, dad');
 
         model.a = createModel()..b =
             (createModel()..c = 'hello, you');
+            Observable.dirtyCheck();
       }).then(newMicrotask).then((_) {
         expect(lastValue, 'hello, you');
 
         model.a.b = 1;
         expect(errorSeen, isFalse);
+        Observable.dirtyCheck();
       }).then(newMicrotask).then((_) {
         expect(errorSeen, isTrue);
         expect(lastValue, 'hello, you');
@@ -355,6 +359,7 @@ observePathTests() {
         path.close();
 
         model.a.b = createModel()..c = 'hello, back again -- but not observing';
+        Observable.dirtyCheck();
       }).then(newMicrotask).then((_) {
         expect(lastValue, 'hello, you');
 
@@ -362,6 +367,7 @@ observePathTests() {
         new PathObserver(model, 'a.b.c').open((x) { lastValue = x; });
 
         model.a.b.c = 'hello. Back for reals';
+        Observable.dirtyCheck();
       }).then(newMicrotask).then((_) {
         expect(lastValue, 'hello. Back for reals');
       });
