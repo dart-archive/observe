@@ -1,6 +1,6 @@
 #### 0.13.2
 
-* Update to analyzer '^0.27.0' and the test package.
+* Update to analyzer '^0.27.0'.
 
 #### 0.13.1+3
 

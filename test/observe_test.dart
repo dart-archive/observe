@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/dirty_check.dart' as dirty_check;
-import 'package:test/test.dart';
+import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
 import 'package:observe/mirrors_used.dart' as mu; // make test smaller.
@@ -82,7 +82,6 @@ void _observeTests(createModel(x)) {
 
   tearDown(() {
     for (var sub in subs) sub.cancel();
-    Observable.dirtyCheck();
     return new Future(() {
       expect(dirty_check.allObservablesCount, initialObservers,
           reason: 'Observable object leaked');
@@ -108,7 +107,6 @@ void _observeTests(createModel(x)) {
 
     subs.add(t.changes.listen((n) {}));
     expect(t.hasObservers, true);
-    Observable.dirtyCheck();
   });
 
   test('changes delived async', () {
@@ -123,7 +121,6 @@ void _observeTests(createModel(x)) {
     t.value = 41;
     t.value = 42;
     expect(called, 0);
-    Observable.dirtyCheck();
   });
 
   test('cause changes in handler', () {
@@ -140,7 +137,6 @@ void _observeTests(createModel(x)) {
     }, count: 2)));
 
     t.value = 42;
-    Observable.dirtyCheck();
   });
 
   test('multiple observers', () {
@@ -155,7 +151,6 @@ void _observeTests(createModel(x)) {
 
     t.value = 41;
     t.value = 42;
-    Observable.dirtyCheck();
   });
 
   test('async processing model', () {
@@ -166,7 +161,6 @@ void _observeTests(createModel(x)) {
     t.value = 42;
     expectChanges(records, [], reason: 'changes delived async');
 
-    Observable.dirtyCheck();
     return new Future(() {
       expectPropertyChanges(records, watch ? 1 : 2);
       records.clear();
@@ -174,7 +168,6 @@ void _observeTests(createModel(x)) {
       t.value = 777;
       expectChanges(records, [], reason: 'changes delived async');
 
-      Observable.dirtyCheck();
     }).then(newMicrotask).then((_) {
       expectPropertyChanges(records, 1);
 
@@ -194,7 +187,6 @@ void _observeTests(createModel(x)) {
       scheduleMicrotask(Observable.dirtyCheck);
     }));
     t.value = 42;
-    Observable.dirtyCheck();
   });
 
   test('cancel and reobserve', () {
@@ -213,7 +205,6 @@ void _observeTests(createModel(x)) {
       }));
     }));
     t.value = 42;
-    Observable.dirtyCheck();
   });
 
   test('cannot modify changes list', () {
@@ -222,7 +213,6 @@ void _observeTests(createModel(x)) {
     subs.add(t.changes.listen((r) { records = r; }));
     t.value = 42;
 
-    Observable.dirtyCheck();
     return new Future(() {
       expectPropertyChanges(records, 1);
 
@@ -244,7 +234,6 @@ void _observeTests(createModel(x)) {
     subs.add(t.changes.listen((r) { records.addAll(r); }));
     t.notifyChange(new PropertyChangeRecord(t, #value, 123, 42));
 
-    Observable.dirtyCheck();
     return new Future(() {
       expectPropertyChanges(records, 1);
       expect(t.value, 123, reason: 'value did not actually change.');
@@ -258,7 +247,6 @@ void _observeTests(createModel(x)) {
     expect(t.notifyPropertyChange(#value, t.value, 42), 42,
         reason: 'notifyPropertyChange returns newValue');
 
-    Observable.dirtyCheck();
     return new Future(() {
       expectPropertyChanges(records, 1);
       expect(t.value, 123, reason: 'value did not actually change.');

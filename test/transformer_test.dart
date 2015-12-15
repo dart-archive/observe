@@ -1,14 +1,16 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-@TestOn('vm')
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'package:observe/transformer.dart';
-import 'package:test/test.dart';
+import 'package:unittest/compact_vm_config.dart';
+import 'package:unittest/unittest.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 main() {
+  useCompactVMConfiguration();
+
   group('replaces Observable for ChangeNotifier', () {
     _testClause('extends Observable', 'extends ChangeNotifier');
     _testClause('extends Base with Observable',

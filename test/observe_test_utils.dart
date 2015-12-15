@@ -7,7 +7,7 @@ library observe.test.observe_test_utils;
 import 'dart:async';
 import 'package:observe/observe.dart';
 import 'package:observe/mirrors_used.dart' as mu; // to make tests smaller
-import 'package:test/test.dart';
+import 'package:unittest/unittest.dart';
 export 'package:observe/src/dirty_check.dart' show dirtyCheckZone;
 
 /// A small method to help readability. Used to cause the next "then" in a chain

@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:test/test.dart';
+import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
 // This file contains code ported from:
