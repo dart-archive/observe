@@ -10,8 +10,6 @@ import 'dart:async';
 
 import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/src/generated/ast.dart';
-import 'package:analyzer/src/generated/error.dart';
-import 'package:analyzer/src/generated/parser.dart';
 import 'package:analyzer/src/generated/scanner.dart';
 import 'package:barback/barback.dart';
 import 'package:code_transformers/messages/build_logger.dart';
@@ -292,7 +290,7 @@ void _fixConstructor(ConstructorDeclaration ctor, TextEditTransaction code,
       if (changedFields.contains(name)) {
         thisInit.add(name);
         // Remove "this." but keep everything else.
-        code.edit(param.thisToken.offset, param.period.end, '');
+        code.edit(param.thisKeyword.offset, param.period.end, '');
       }
     }
   }

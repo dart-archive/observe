@@ -256,17 +256,6 @@ class _InvalidPropertyPath extends PropertyPath {
   _InvalidPropertyPath() : super._([]);
 }
 
-bool _changeRecordMatches(record, key) {
-  if (record is PropertyChangeRecord) {
-    return (record as PropertyChangeRecord).name == key;
-  }
-  if (record is MapChangeRecord) {
-    if (key is Symbol) key = smoke.symbolToName(key);
-    return (record as MapChangeRecord).key == key;
-  }
-  return false;
-}
-
 /// Properties in [Map] that need to be read as properties and not as keys in
 /// the map. We exclude methods ('containsValue', 'containsKey', 'putIfAbsent',
 /// 'addAll', 'remove', 'clear', 'forEach') because there is no use in reading
@@ -294,7 +283,7 @@ _getObjectProperty(object, property) {
     }
     try {
       return smoke.read(object, property);
-    } on NoSuchMethodError catch (e) {
+    } on NoSuchMethodError catch (_) {
       // Rethrow, unless the type implements noSuchMethod, in which case we
       // interpret the exception as a signal that the method was not found.
       // Dart note: getting invalid properties is an error, unlike in JS where
@@ -326,7 +315,7 @@ bool _setObjectProperty(object, property, value) {
     try {
       smoke.write(object, property, value);
       return true;
-    } on NoSuchMethodError catch (e, s) {
+    } on NoSuchMethodError catch (_) {
       if (!smoke.hasNoSuchMethod(object.runtimeType)) rethrow;
     }
   }

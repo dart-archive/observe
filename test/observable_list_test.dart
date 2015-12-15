@@ -281,7 +281,7 @@ _runTests() {
       list.sort();
       expect(list.deliverListChanges(), false);
     });
-    
+
     test('clear', () {
       list.clear();
       expect(list, []);
@@ -305,4 +305,3 @@ _lengthChange(int oldValue, int newValue) =>
 
 _change(index, {removed: const [], addedCount: 0}) => new ListChangeRecord(
     list, index, removed: removed, addedCount: addedCount);
-

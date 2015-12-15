@@ -1,3 +1,7 @@
+#### 0.13.2
+
+* Update to analyzer '^0.27.0'.
+
 #### 0.13.1+3
 
  * Sorting an already sorted list will no longer yield new change notifications.

@@ -1,7 +1,6 @@
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'package:observe/transformer.dart';
@@ -158,6 +157,7 @@ class _MockTransform implements Transform {
   Future<Asset> getInput(AssetId id) {
     if (id == primaryInput.id) return new Future.value(primaryInput);
     fail('_MockTransform fail');
+    return null; // Satisfy analyzer
   }
 
   void addOutput(Asset output) {

@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:html';
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:chart/chart.dart';
-import 'package:observe/mirrors_used.dart'; // Makes output smaller.
+import 'package:observe/mirrors_used.dart' as mu; // Makes output smaller.
 import 'package:smoke/mirrors.dart';
 import 'object_benchmark.dart';
 import 'setup_object_benchmark.dart';
@@ -17,6 +17,7 @@ import 'path_benchmark.dart';
 import 'setup_path_benchmark.dart';
 
 /// Benchmark names to factory functions.
+/// Uses [mu].
 typedef BenchmarkBase BenchmarkFactory(
     int objectCount, int mutationCount, String config);
 final Map<String, BenchmarkFactory> benchmarkFactories = {
