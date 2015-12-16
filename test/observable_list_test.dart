@@ -4,10 +4,9 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
-main() => dirtyCheckZone().run(_runTests);
+main() => _runTests();
 
 _runTests() {
   // TODO(jmesserly): need all standard List API tests.
