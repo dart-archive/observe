@@ -4,13 +4,12 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
 // This file contains code ported from:
 // https://github.com/rafaelw/ChangeSummary/blob/master/tests/test.js
 
-main() => dirtyCheckZone().run(listChangeTests);
+main() => listChangeTests();
 
 // TODO(jmesserly): port or write array fuzzer tests
 listChangeTests() {

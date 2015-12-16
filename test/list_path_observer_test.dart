@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
 import 'observe_test_utils.dart';
 
 import 'package:observe/mirrors_used.dart' as mu; // make test smaller.

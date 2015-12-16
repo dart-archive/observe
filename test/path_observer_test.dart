@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'package:observe/observe.dart';
-import 'package:unittest/unittest.dart';
 import 'package:observe/src/path_observer.dart'
     show getSegmentsOfPropertyPathForTesting,
          observerSentinelForTesting;
@@ -21,7 +20,7 @@ import 'package:smoke/mirrors.dart';
 // the tests below.
 //
 /// Uses [mu].
-main() => dirtyCheckZone().run(() {
+main() {
   useMirrors();
 
   group('PathObserver', observePathTests);
@@ -148,7 +147,7 @@ main() => dirtyCheckZone().run(() {
   });
 
   group('CompoundObserver', compoundObserverTests);
-});
+}
 
 observePathTests() {
   test('Degenerate Values', () {
