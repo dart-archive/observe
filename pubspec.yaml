@@ -9,7 +9,7 @@ description: >
   user input into the DOM is immediately assigned to the model.
 homepage: https://www.dartlang.org/polymer-dart/
 dependencies:
-  analyzer: '>=0.15.6 <0.28.0'
+  analyzer: '^0.27.0'
   barback: '>=0.14.2 <0.16.0'
   logging: '>=0.9.0 <0.12.0'
   path: '>=0.9.0 <2.0.0'
@@ -18,7 +18,7 @@ dependencies:
   source_maps: '>=0.9.4 <0.11.0'
   source_span: '>=1.0.0 <2.0.0'
   utf: '>=0.9.0 <0.10.0'
-  code_transformers: '>=0.2.3 <0.4.0'
+  code_transformers: '^0.3.0'
 dev_dependencies:
   test: ">=0.12.5"
   benchmark_harness: '>=1.0.0 <2.0.0'

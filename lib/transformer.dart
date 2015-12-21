@@ -296,7 +296,7 @@ void _fixConstructor(ConstructorDeclaration ctor, TextEditTransaction code,
       if (changedFields.contains(name)) {
         thisInit.add(name);
         // Remove "this." but keep everything else.
-        code.edit(param.thisToken.offset, param.period.end, '');
+        code.edit(param.thisKeyword.offset, param.period.end, '');
       }
     }
   }
