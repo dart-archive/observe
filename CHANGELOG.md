@@ -1,3 +1,7 @@
+#### 0.13.4
+
+* Fixed strong mode errors and warnings
+
 #### 0.13.3+1
 
 * Add support for code_transformers `0.4.x`.
