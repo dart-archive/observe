@@ -12,7 +12,8 @@ library observe.mirrors_used;
 // invoking dart2js without running this package's transformers. The
 // transformer in `lib/transformer.dart` will replace @observable with the
 // @reflectable annotation.
-@MirrorsUsed(metaTargets: const [Reflectable, ObservableProperty],
+@MirrorsUsed(
+    metaTargets: const [Reflectable, ObservableProperty],
     override: 'smoke.mirrors')
 import 'dart:mirrors' show MirrorsUsed;
 import 'package:observe/observe.dart' show Reflectable, ObservableProperty;

@@ -13,6 +13,7 @@
 library observe.src.dirty_check;
 
 import 'dart:async';
+import 'package:func/func.dart';
 import 'package:logging/logging.dart';
 import 'package:observe/observe.dart' show Observable;
 
@@ -103,7 +104,7 @@ ZoneSpecification dirtyCheckZoneSpec() {
     });
   }
 
-  wrapCallback(Zone self, ZoneDelegate parent, Zone zone, f()) {
+  Func0 wrapCallback(Zone self, ZoneDelegate parent, Zone zone, f()) {
     // TODO(jmesserly): why does this happen?
     if (f == null) return f;
     return () {
@@ -112,7 +113,7 @@ ZoneSpecification dirtyCheckZoneSpec() {
     };
   }
 
-  wrapUnaryCallback(Zone self, ZoneDelegate parent, Zone zone, f(x)) {
+  Func1 wrapUnaryCallback(Zone self, ZoneDelegate parent, Zone zone, f(x)) {
     // TODO(jmesserly): why does this happen?
     if (f == null) return f;
     return (x) {
@@ -122,8 +123,7 @@ ZoneSpecification dirtyCheckZoneSpec() {
   }
 
   return new ZoneSpecification(
-      registerCallback: wrapCallback,
-      registerUnaryCallback: wrapUnaryCallback);
+      registerCallback: wrapCallback, registerUnaryCallback: wrapUnaryCallback);
 }
 
 /// Forks a [Zone] off the current one that does dirty-checking automatically

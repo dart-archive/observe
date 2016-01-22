@@ -55,7 +55,7 @@ final DivElement canvasWrapper = querySelector('#canvasWrapper');
 final SelectElement benchmarkSelect = querySelector('#benchmarkSelect');
 final SelectElement configSelect = querySelector('#configSelect');
 final UListElement legendList = querySelector('#legendList');
-final List<List<String>> colors = [
+final List<String> colors = [
   [0, 0, 255],
   [138, 43, 226],
   [165, 42, 42],
@@ -96,7 +96,7 @@ main() {
       i++;
     });
 
-    var results = [];
+    var results = <List<double>>[];
     for (int objectCount in objectCounts) {
       int x = 0;
       for (int mutationCount in mutationCounts) {

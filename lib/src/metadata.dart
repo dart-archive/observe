@@ -24,7 +24,6 @@ class ObservableProperty {
   const ObservableProperty();
 }
 
-
 /// This can be used to retain any properties that you wish to access with
 /// Dart's mirror system. If you import `package:observe/mirrors_used.dart`, all
 /// classes or members annotated with `@reflectable` wil be preserved by dart2js

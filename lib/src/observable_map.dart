@@ -7,7 +7,6 @@ library observe.src.observable_map;
 import 'dart:collection';
 import 'package:observe/observe.dart';
 
-
 // TODO(jmesserly): this needs to be faster. We currently require multiple
 // lookups per key to get the old value.
 // TODO(jmesserly): this doesn't implement the precise interfaces like
@@ -35,13 +34,18 @@ class MapChangeRecord<K, V> extends ChangeRecord {
   final bool isRemove;
 
   MapChangeRecord(this.key, this.oldValue, this.newValue)
-      : isInsert = false, isRemove = false;
+      : isInsert = false,
+        isRemove = false;
 
   MapChangeRecord.insert(this.key, this.newValue)
-      : isInsert = true, isRemove = false, oldValue = null;
+      : isInsert = true,
+        isRemove = false,
+        oldValue = null;
 
   MapChangeRecord.remove(this.key, this.oldValue)
-      : isInsert = false, isRemove = true, newValue = null;
+      : isInsert = false,
+        isRemove = true,
+        newValue = null;
 
   String toString() {
     var kind = isInsert ? 'insert' : isRemove ? 'remove' : 'set';
@@ -77,7 +81,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
 
   /// Like [ObservableMap.from], but creates an empty map.
   factory ObservableMap.createFromType(Map<K, V> other) {
-    ObservableMap result;
+    ObservableMap<K, V> result;
     if (other is SplayTreeMap) {
       result = new ObservableMap<K, V>.sorted();
     } else if (other is LinkedHashMap) {
@@ -92,7 +96,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
 
   @reflectable Iterable<V> get values => _map.values;
 
-  @reflectable int get length =>_map.length;
+  @reflectable int get length => _map.length;
 
   @reflectable bool get isEmpty => length == 0;
 
@@ -126,7 +130,9 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
   }
 
   void addAll(Map<K, V> other) {
-    other.forEach((K key, V value) { this[key] = value; });
+    other.forEach((K key, V value) {
+      this[key] = value;
+    });
   }
 
   V putIfAbsent(K key, V ifAbsent()) {
@@ -142,7 +148,7 @@ class ObservableMap<K, V> extends ChangeNotifier implements Map<K, V> {
 
   V remove(Object key) {
     int len = _map.length;
-    V result =  _map.remove(key);
+    V result = _map.remove(key);
     if (hasObservers && len != _map.length) {
       notifyChange(new MapChangeRecord.remove(key, result));
       notifyPropertyChange(#length, len, _map.length);

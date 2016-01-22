@@ -6,7 +6,6 @@ library observe.src.change_record;
 
 import 'package:observe/observe.dart';
 
-
 /// Records a change to an [Observable].
 // TODO(jmesserly): remove this type
 abstract class ChangeRecord {}

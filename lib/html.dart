@@ -42,7 +42,7 @@ class ObservableLocationHash extends ChangeNotifier {
     _notifyHashChange(null);
   }
 
-  void _notifyHashChange(_) {
+  void _notifyHashChange(Event _) {
     var oldValue = _currentHash;
     _currentHash = hash;
     notifyPropertyChange(#hash, oldValue, _currentHash);
@@ -66,9 +66,8 @@ void updateCssClass(Element element, String className, bool value) {
 ///
 /// Bind a CSS class to the observable [object] and property [path].
 @deprecated
-PathObserver bindCssClass(Element element, String className,
-    Observable object, String path) {
-
+PathObserver bindCssClass(
+    Element element, String className, Observable object, String path) {
   callback(value) {
     updateCssClass(element, className, value);
   }

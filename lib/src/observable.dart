@@ -34,7 +34,7 @@ abstract class Observable {
   /// have changed. If they have, it delivers the changes for the object.
   static void dirtyCheck() => dirtyCheckObservables();
 
-  StreamController _changes;
+  StreamController<List<ChangeRecord>> _changes;
 
   Map<Symbol, Object> _values;
   List<ChangeRecord> _records;
@@ -45,8 +45,8 @@ abstract class Observable {
   /// [deliverChanges] can be called to force synchronous delivery.
   Stream<List<ChangeRecord>> get changes {
     if (_changes == null) {
-      _changes = new StreamController.broadcast(sync: true,
-          onListen: _observed, onCancel: _unobserved);
+      _changes = new StreamController.broadcast(
+          sync: true, onListen: _observed, onCancel: _unobserved);
     }
     return _changes.stream;
   }
@@ -64,8 +64,10 @@ abstract class Observable {
     // Note: we scan for @observable regardless of whether the base type
     // actually includes this mixin. While perhaps too inclusive, it lets us
     // avoid complex logic that walks "with" and "implements" clauses.
-    var queryOptions = new smoke.QueryOptions(includeInherited: true,
-        includeProperties: false, withAnnotations: const [ObservableProperty]);
+    var queryOptions = new smoke.QueryOptions(
+        includeInherited: true,
+        includeProperties: false,
+        withAnnotations: const [ObservableProperty]);
     for (var decl in smoke.query(this.runtimeType, queryOptions)) {
       var name = decl.name;
       // Note: since this is a field, getting the value shouldn't execute
@@ -110,7 +112,7 @@ abstract class Observable {
 
     // Start with manually notified records (computed properties, etc),
     // then scan all fields for additional changes.
-    List records = _records;
+    var records = _records;
     _records = null;
 
     _values.forEach((name, oldValue) {
@@ -134,8 +136,9 @@ abstract class Observable {
   /// equal, no change will be recorded.
   ///
   /// For convenience this returns [newValue].
-  notifyPropertyChange(Symbol field, Object oldValue, Object newValue)
-      => notifyPropertyChangeHelper(this, field, oldValue, newValue);
+  /*=T*/ notifyPropertyChange /*<T>*/ (
+          Symbol field, /*=T*/ oldValue, /*=T*/ newValue) =>
+      notifyPropertyChangeHelper(this, field, oldValue, newValue);
 
   /// Notify observers of a change.
   ///
@@ -159,9 +162,8 @@ abstract class Observable {
 // TODO(jmesserly): remove the instance method and make this top-level method
 // public instead?
 // NOTE: this is not exported publically.
-notifyPropertyChangeHelper(Observable obj, Symbol field, Object oldValue,
-    Object newValue) {
-
+/*=T*/ notifyPropertyChangeHelper /*<T>*/ (
+    Observable obj, Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
   if (obj.hasObservers && oldValue != newValue) {
     obj.notifyChange(new PropertyChangeRecord(obj, field, oldValue, newValue));
   }

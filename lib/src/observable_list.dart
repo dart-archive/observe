@@ -15,7 +15,7 @@ import 'list_diff.dart' show projectListSplices, calcSplices;
 class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   List<ListChangeRecord> _listRecords;
 
-  StreamController _listChanges;
+  StreamController<List<ListChangeRecord>> _listChanges;
 
   /// The inner [List<E>] with the actual storage.
   final List<E> _list;
@@ -58,14 +58,14 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   Stream<List<ListChangeRecord>> get listChanges {
     if (_listChanges == null) {
       // TODO(jmesserly): split observed/unobserved notions?
-      _listChanges = new StreamController.broadcast(sync: true,
-          onCancel: () { _listChanges = null; });
+      _listChanges = new StreamController.broadcast(sync: true, onCancel: () {
+        _listChanges = null;
+      });
     }
     return _listChanges.stream;
   }
 
-  bool get hasListObservers =>
-      _listChanges != null && _listChanges.hasListener;
+  bool get hasListObservers => _listChanges != null && _listChanges.hasListener;
 
   @reflectable int get length => _list.length;
 
@@ -92,8 +92,8 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   @reflectable void operator []=(int index, E value) {
     var oldValue = _list[index];
     if (hasListObservers && oldValue != value) {
-      _recordChange(new ListChangeRecord(this, index, addedCount: 1,
-          removed: [oldValue]));
+      _recordChange(new ListChangeRecord(this, index,
+          addedCount: 1, removed: [oldValue]));
     }
     _list[index] = value;
   }
@@ -113,10 +113,10 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     if (iterable is! List && iterable is! Set) {
       iterable = iterable.toList();
     }
-    var len = iterable.length;
-    if (hasListObservers && len > 0) {
-      _recordChange(new ListChangeRecord(this, index, addedCount: len,
-          removed: _list.getRange(index, len).toList()));
+    var length = iterable.length;
+    if (hasListObservers && length > 0) {
+      _recordChange(new ListChangeRecord(this, index,
+          addedCount: length, removed: _list.sublist(index, length)));
     }
     _list.setAll(index, iterable);
   }
@@ -188,8 +188,8 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     _notifyChangeLength(len, _list.length);
 
     if (hasListObservers && insertionLength > 0) {
-      _recordChange(new ListChangeRecord(this, index,
-          addedCount: insertionLength));
+      _recordChange(
+          new ListChangeRecord(this, index, addedCount: insertionLength));
     }
   }
 
@@ -214,7 +214,6 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
     }
     _list[index] = element;
   }
-
 
   E removeAt(int index) {
     E result = this[index];
@@ -281,14 +280,13 @@ class ObservableList<E> extends ListBase<E> with ChangeNotifier {
   /// Complexity is `O(l * p)` where `l` is the length of the current list and
   /// `p` is the length of the old list.
   static List<ListChangeRecord> calculateChangeRecords(
-      List<Object> oldValue, List<Object> newValue) =>
+          List<Object> oldValue, List<Object> newValue) =>
       calcSplices(newValue, 0, newValue.length, oldValue, 0, oldValue.length);
 
   /// Updates the [previous] list using the change [records]. For added items,
   /// the [current] list is used to find the current value.
   static void applyChangeRecords(List<Object> previous, List<Object> current,
       List<ListChangeRecord> changeRecords) {
-
     if (identical(previous, current)) {
       throw new ArgumentError("can't use same list for previous and current");
     }

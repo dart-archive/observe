@@ -11,6 +11,7 @@ homepage: https://www.dartlang.org/polymer-dart/
 dependencies:
   analyzer: '^0.27.0'
   barback: '>=0.14.2 <0.16.0'
+  func: '>=0.1.0 <0.2.0'
   logging: '>=0.9.0 <0.12.0'
   path: '>=0.9.0 <2.0.0'
   smoke: '>=0.1.0 <0.4.0'

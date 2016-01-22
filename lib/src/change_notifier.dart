@@ -16,13 +16,13 @@ import 'package:observe/src/observable.dart' show notifyPropertyChangeHelper;
 /// When a field, property, or indexable item is changed, a derived class should
 /// call [notifyPropertyChange]. See that method for an example.
 abstract class ChangeNotifier implements Observable {
-  StreamController _changes;
+  StreamController<List<ChangeRecord>> _changes;
   List<ChangeRecord> _records;
 
   Stream<List<ChangeRecord>> get changes {
     if (_changes == null) {
-      _changes = new StreamController.broadcast(sync: true,
-          onListen: observed, onCancel: unobserved);
+      _changes = new StreamController.broadcast(
+          sync: true, onListen: observed, onCancel: unobserved);
     }
     return _changes.stream;
   }
@@ -66,8 +66,9 @@ abstract class ChangeNotifier implements Observable {
   ///     @reflectable set myField(value) {
   ///       _myField = notifyPropertyChange(#myField, _myField, value);
   ///     }
-  notifyPropertyChange(Symbol field, Object oldValue, Object newValue)
-      => notifyPropertyChangeHelper(this, field, oldValue, newValue);
+  /*=T*/ notifyPropertyChange /*<T>*/ (
+          Symbol field, /*=T*/ oldValue, /*=T*/ newValue) =>
+      notifyPropertyChangeHelper /*<T>*/ (this, field, oldValue, newValue);
 
   void notifyChange(ChangeRecord record) {
     if (!hasObservers) return;

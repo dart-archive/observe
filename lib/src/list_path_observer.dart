@@ -21,9 +21,7 @@ class ListPathObserver<E, P> extends ChangeNotifier {
   bool _scheduled = false;
   Iterable<P> _value;
 
-  ListPathObserver(this.list, String path)
-      : _itemPath = path {
-
+  ListPathObserver(this.list, String path) : _itemPath = path {
     // TODO(jmesserly): delay observation until we are observed.
     _sub = list.listChanges.listen((records) {
       for (var record in records) {
@@ -46,7 +44,7 @@ class ListPathObserver<E, P> extends ChangeNotifier {
 
   void _reduce() {
     _scheduled = false;
-    var newValue = _observers.map((o) => o.value);
+    var newValue = _observers.map((o) => o.value as P);
     _value = notifyPropertyChange(#value, _value, newValue);
   }
 

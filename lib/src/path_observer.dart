@@ -132,7 +132,6 @@ class PropertyPath {
     var pathObj = _pathCache[path];
     if (pathObj != null) return pathObj;
 
-
     final segments = new _PathParser().parse(path);
     if (segments == null) return _InvalidPropertyPath._instance;
 
@@ -201,7 +200,7 @@ class PropertyPath {
       hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
       hash = hash ^ (hash >> 6);
     }
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) <<  3));
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
     hash = hash ^ (hash >> 11);
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
@@ -245,7 +244,6 @@ class PropertyPath {
   // Dart note: it doesn't make sense to have compiledGetValueFromFn in Dart.
 }
 
-
 /// Visible only for testing:
 getSegmentsOfPropertyPathForTesting(p) => p._segments;
 
@@ -278,7 +276,8 @@ _getObjectProperty(object, property) {
     // TODO(sigmund): should we also support using checking dynamically for
     // whether the type practically implements the indexer API
     // (smoke.hasInstanceMethod(type, const Symbol('[]')))?
-    if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
+    if (object is Indexable ||
+        object is Map && !_MAP_PROPERTIES.contains(property)) {
       return object[smoke.symbolToName(property)];
     }
     try {
@@ -308,7 +307,8 @@ bool _setObjectProperty(object, property, value) {
     }
   } else if (property is Symbol) {
     // Support indexer if available, e.g. Maps or polymer_expressions Scope.
-    if (object is Indexable || object is Map && !_MAP_PROPERTIES.contains(property)) {
+    if (object is Indexable ||
+        object is Map && !_MAP_PROPERTIES.contains(property)) {
       object[smoke.symbolToName(property)] = value;
       return true;
     }
@@ -339,30 +339,27 @@ _isIdent(s) => _identRegExp.hasMatch(s);
 // Dart note: refactored to convert to codepoints once and operate on codepoints
 // rather than characters.
 class _PathParser {
-  List keys = [];
+  List<Object> keys = [];
   int index = -1;
   String key;
 
-  final Map<String, List<String>> _pathStateMachine = {
+  final Map<String, Map<String, List<String>>> _pathStateMachine = {
     'beforePath': {
       'ws': ['beforePath'],
       'ident': ['inIdent', 'append'],
       '[': ['beforeElement'],
       'eof': ['afterPath']
     },
-
     'inPath': {
       'ws': ['inPath'],
       '.': ['beforeIdent'],
       '[': ['beforeElement'],
       'eof': ['afterPath']
     },
-
     'beforeIdent': {
       'ws': ['beforeIdent'],
       'ident': ['inIdent', 'append']
     },
-
     'inIdent': {
       'ident': ['inIdent', 'append'],
       '0': ['inIdent', 'append'],
@@ -372,7 +369,6 @@ class _PathParser {
       '[': ['beforeElement', 'push'],
       'eof': ['afterPath', 'push']
     },
-
     'beforeElement': {
       'ws': ['beforeElement'],
       '0': ['afterZero', 'append'],
@@ -380,31 +376,26 @@ class _PathParser {
       "'": ['inSingleQuote', 'append', ''],
       '"': ['inDoubleQuote', 'append', '']
     },
-
     'afterZero': {
       'ws': ['afterElement', 'push'],
       ']': ['inPath', 'push']
     },
-
     'inIndex': {
       '0': ['inIndex', 'append'],
       'number': ['inIndex', 'append'],
       'ws': ['afterElement'],
       ']': ['inPath', 'push']
     },
-
     'inSingleQuote': {
       "'": ['afterElement'],
       'eof': ['error'],
       'else': ['inSingleQuote', 'append']
     },
-
     'inDoubleQuote': {
       '"': ['afterElement'],
       'eof': ['error'],
       'else': ['inDoubleQuote', 'append']
     },
-
     'afterElement': {
       'ws': ['afterElement'],
       ']': ['inPath', 'push']
@@ -414,7 +405,7 @@ class _PathParser {
   /// From getPathCharType: determines the type of a given [code]point.
   String _getPathCharType(code) {
     if (code == null) return 'eof';
-    switch(code) {
+    switch (code) {
       case 0x5B: // [
       case 0x5D: // ]
       case 0x2E: // .
@@ -431,10 +422,10 @@ class _PathParser {
       case 0x09: // Tab
       case 0x0A: // Newline
       case 0x0D: // Return
-      case 0xA0:  // No-break space
-      case 0xFEFF:  // Byte Order Mark
-      case 0x2028:  // Line Separator
-      case 0x2029:  // Paragraph Separator
+      case 0xA0: // No-break space
+      case 0xFEFF: // Byte Order Mark
+      case 0x2028: // Line Separator
+      case 0x2029: // Paragraph Separator
         return 'ws';
     }
 
@@ -443,8 +434,7 @@ class _PathParser {
       return 'ident';
 
     // 1-9
-    if (0x31 <= code && code <= 0x39)
-      return 'number';
+    if (0x31 <= code && code <= 0x39) return 'number';
 
     return 'else';
   }
@@ -482,7 +472,7 @@ class _PathParser {
   }
 
   /// Returns the parsed keys, or null if there was a parse error.
-  List<String> parse(String path) {
+  List<Object> parse(String path) {
     var codePoints = stringToCodepoints(path);
     var mode = 'beforePath';
 
@@ -491,7 +481,8 @@ class _PathParser {
       var c = index >= codePoints.length ? null : codePoints[index];
 
       if (c != null &&
-          _char(c) == '\\' && _maybeUnescapeQuote(mode, codePoints)) continue;
+          _char(c) == '\\' &&
+          _maybeUnescapeQuote(mode, codePoints)) continue;
 
       var type = _getPathCharType(c);
       if (mode == 'error') return null;
@@ -506,7 +497,8 @@ class _PathParser {
       if (actionName == 'push' && key != null) push();
       if (actionName == 'append') {
         var newChar = transition.length > 2 && transition[2] != null
-            ? transition[2] : _char(c);
+            ? transition[2]
+            : _char(c);
         append(newChar);
       }
 
@@ -517,7 +509,6 @@ class _PathParser {
 }
 
 final Logger _logger = new Logger('observe.PathObserver');
-
 
 /// This is a simple cache. It's like LRU but we don't update an item on a
 /// cache hit, because that would require allocation. Better to let it expire
@@ -646,9 +637,9 @@ class CompoundObserver extends _Observer implements Bindable {
       var value;
       if (identical(object, _observerSentinel)) {
         var observable = path as Bindable;
-        value = _state == _Observer._UNOPENED ?
-            observable.open((_) => this.deliver()) :
-            observable.value;
+        value = _state == _Observer._UNOPENED
+            ? observable.open((_) => this.deliver())
+            : observable.value;
       } else {
         value = (path as PropertyPath).getValueFrom(object);
       }
@@ -687,7 +678,10 @@ abstract class Indexable<K, V> {
 }
 
 const _observerSentinel = const _ObserverSentinel();
-class _ObserverSentinel { const _ObserverSentinel(); }
+
+class _ObserverSentinel {
+  const _ObserverSentinel();
+}
 
 // Visible for testing
 get observerSentinelForTesting => _observerSentinel;
@@ -764,10 +758,18 @@ abstract class _Observer extends Bindable {
   void _report(newValue, oldValue, [extraArg]) {
     try {
       switch (_notifyArgumentCount) {
-        case 0: _notifyCallback(); break;
-        case 1: _notifyCallback(newValue); break;
-        case 2: _notifyCallback(newValue, oldValue); break;
-        case 3: _notifyCallback(newValue, oldValue, extraArg); break;
+        case 0:
+          _notifyCallback();
+          break;
+        case 1:
+          _notifyCallback(newValue);
+          break;
+        case 2:
+          _notifyCallback(newValue, oldValue);
+          break;
+        case 3:
+          _notifyCallback(newValue, oldValue, extraArg);
+          break;
       }
     } catch (e, s) {
       // Deliver errors async, so if a single callback fails it doesn't prevent
@@ -903,7 +905,7 @@ class _ObservedSet {
     return true;
   }
 
-  void _callback(records) {
+  void _callback(List<ChangeRecord> records) {
     if (_canIgnoreRecords(records)) return;
     for (var observer in _observers.toList(growable: false)) {
       if (observer._isOpen) observer._iterateObjects(observe);

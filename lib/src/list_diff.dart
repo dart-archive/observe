@@ -41,7 +41,6 @@ class ListChangeRecord extends ChangeRecord {
 
   factory ListChangeRecord(List object, int index,
       {List removed, int addedCount}) {
-
     if (removed == null) removed = [];
     if (addedCount == null) addedCount = 0;
     return new ListChangeRecord._(object, index, removed, addedCount);
@@ -79,7 +78,7 @@ List<List<int>> _calcEditDistances(List current, int currentStart,
   // "Deletion" columns
   var rowCount = oldEnd - oldStart + 1;
   var columnCount = currentEnd - currentStart + 1;
-  var distances = new List(rowCount);
+  var distances = new List<List<int>>(rowCount);
 
   // "Addition" rows. Initialize null column.
   for (var i = 0; i < rowCount; i++) {
@@ -119,7 +118,7 @@ List<int> _spliceOperationsFromEditDistances(List<List<int>> distances) {
   var i = distances.length - 1;
   var j = distances[0].length - 1;
   var current = distances[i][j];
-  var edits = [];
+  var edits = <int>[];
   while (i > 0 || j > 0) {
     if (i == 0) {
       edits.add(_EDIT_ADD);
@@ -189,7 +188,6 @@ int _sharedSuffix(List arr1, List arr2, int searchLength) {
 ///   p: The length of the old array
 List<ListChangeRecord> calcSplices(List current, int currentStart,
     int currentEnd, List old, int oldStart, int oldEnd) {
-
   var prefixCount = 0;
   var suffixCount = 0;
 
@@ -217,21 +215,23 @@ List<ListChangeRecord> calcSplices(List current, int currentStart,
       splice._removed.add(old[oldStart++]);
     }
 
-    return [splice ];
-  } else if (oldStart == oldEnd)
-    return [new ListChangeRecord(current, currentStart,
-        addedCount: currentEnd - currentStart)];
+    return [splice];
+  } else if (oldStart == oldEnd) {
+    return [
+      new ListChangeRecord(current, currentStart,
+          addedCount: currentEnd - currentStart)
+    ];
+  }
 
-  var ops = _spliceOperationsFromEditDistances(
-      _calcEditDistances(current, currentStart, currentEnd, old, oldStart,
-          oldEnd));
+  var ops = _spliceOperationsFromEditDistances(_calcEditDistances(
+      current, currentStart, currentEnd, old, oldStart, oldEnd));
 
   ListChangeRecord splice = null;
   var splices = <ListChangeRecord>[];
   var index = currentStart;
   var oldIndex = oldStart;
   for (var i = 0; i < ops.length; i++) {
-    switch(ops[i]) {
+    switch (ops[i]) {
       case _EDIT_LEAVE:
         if (splice != null) {
           splices.add(splice);
@@ -290,8 +290,10 @@ void _mergeSplice(List<ListChangeRecord> splices, ListChangeRecord record) {
     if (inserted) continue;
 
     var intersectCount = _intersect(
-        splice.index, splice.index + splice.removed.length,
-        current.index, current.index + current.addedCount);
+        splice.index,
+        splice.index + splice.removed.length,
+        current.index,
+        current.index + current.addedCount);
 
     if (intersectCount >= 0) {
       // Merge the two splices
@@ -302,8 +304,8 @@ void _mergeSplice(List<ListChangeRecord> splices, ListChangeRecord record) {
       insertionOffset -= current.addedCount - current.removed.length;
 
       splice._addedCount += current.addedCount - intersectCount;
-      var deleteCount = splice.removed.length +
-                        current.removed.length - intersectCount;
+      var deleteCount =
+          splice.removed.length + current.removed.length - intersectCount;
 
       if (splice.addedCount == 0 && deleteCount == 0) {
         // merged splice is a noop. discard.
@@ -313,8 +315,8 @@ void _mergeSplice(List<ListChangeRecord> splices, ListChangeRecord record) {
 
         if (splice.index < current.index) {
           // some prefix of splice.removed is prepended to current.removed.
-          removed.insertAll(0,
-              splice.removed.getRange(0, current.index - splice.index));
+          removed.insertAll(
+              0, splice.removed.getRange(0, current.index - splice.index));
         }
 
         if (splice.index + splice.removed.length >
@@ -348,9 +350,8 @@ void _mergeSplice(List<ListChangeRecord> splices, ListChangeRecord record) {
   if (!inserted) splices.add(splice);
 }
 
-List<ListChangeRecord> _createInitialSplices(List<Object> list,
-    List<ListChangeRecord> records) {
-
+List<ListChangeRecord> _createInitialSplices(
+    List<Object> list, List<ListChangeRecord> records) {
   var splices = <ListChangeRecord>[];
   for (var record in records) {
     _mergeSplice(splices, record);
@@ -372,19 +373,23 @@ List<ListChangeRecord> _createInitialSplices(List<Object> list,
 /// Here, we inserted some records and then removed some of them.
 /// If someone processed these records naively, they would "play back" the
 /// insert incorrectly, because those items will be shifted.
-List<ListChangeRecord> projectListSplices(List list,
-    List<ListChangeRecord> records) {
+List<ListChangeRecord> projectListSplices(
+    List<Object> list, List<ListChangeRecord> records) {
   if (records.length <= 1) return records;
 
-  var splices = [];
+  var splices = <ListChangeRecord>[];
   for (var splice in _createInitialSplices(list, records)) {
     if (splice.addedCount == 1 && splice.removed.length == 1) {
       if (splice.removed[0] != list[splice.index]) splices.add(splice);
       continue;
     }
 
-    splices.addAll(calcSplices(list, splice.index,
-        splice.index + splice.addedCount, splice._removed, 0,
+    splices.addAll(calcSplices(
+        list,
+        splice.index,
+        splice.index + splice.addedCount,
+        splice._removed,
+        0,
         splice.removed.length));
   }
 

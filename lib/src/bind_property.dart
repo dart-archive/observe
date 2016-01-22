@@ -25,8 +25,8 @@ import 'package:observe/observe.dart';
 ///
 /// See also [notifyPropertyChange].
 // TODO(jmesserly): make this an instance method?
-StreamSubscription onPropertyChange(Observable source, Symbol sourceName,
-    void callback()) {
+StreamSubscription onPropertyChange(
+    Observable source, Symbol sourceName, void callback()) {
   return source.changes.listen((records) {
     for (var record in records) {
       if (record is PropertyChangeRecord &&
