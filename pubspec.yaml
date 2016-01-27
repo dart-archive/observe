@@ -32,3 +32,5 @@ transformers:
     files:
       - benchmark/test_observable.dart
       - benchmark/test_path_observable.dart
+- test/pub_serve:
+    $include: test/**_test.dart
