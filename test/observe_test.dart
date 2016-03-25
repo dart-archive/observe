@@ -49,11 +49,14 @@ void _tests() {
       var maxNumIterations = dirty_check.MAX_DIRTY_CHECK_CYCLES;
 
       var x = new WatcherModel(0);
-      var sub = x.changes.listen(expectAsync((_) {
+      int called = 0;
+      var sub = x.changes.listen((_) {
+        called++;
         x.value++;
-      }, count: maxNumIterations));
+      });
       x.value = 1;
       Observable.dirtyCheck();
+      expect(called, maxNumIterations);
       expect(x.value, maxNumIterations + 1);
       expect(messages.length, 2);
 
@@ -197,13 +200,13 @@ void _observeTests(createModel(x)) {
       expectPropertyChanges(records, 1);
       sub.cancel();
 
-      scheduleMicrotask(expectAsync(() {
+      scheduleMicrotask(() {
         subs.add(t.changes.listen(expectAsync((records) {
           expectPropertyChanges(records, 1);
         })));
         t.value = 777;
         scheduleMicrotask(Observable.dirtyCheck);
-      }));
+      });
     }));
     t.value = 42;
   });

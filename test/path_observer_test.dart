@@ -161,7 +161,7 @@ observePathTests() {
     new PropertyPath('').setValueFrom(123, 42);
     expect(() => new PropertyPath('foo.bar.baz').setValueFrom(123, 42),
         _throwsNSM('foo'));
-    var foo = {};
+    Object foo = {};
     expect(new PathObserver(foo, '').value, foo);
 
     foo = new Object();
@@ -711,7 +711,7 @@ class IndexerModel implements Indexable<String, dynamic> {
 }
 
 @reflectable
-class TestModel extends ChangeNotifier {
+class TestModel extends ChangeNotifier implements WatcherModel {
   var _a, _b, _c;
 
   TestModel([this._a, this._b, this._c]);

@@ -1,3 +1,7 @@
+#### 0.13.5
+
+* Fixed strong mode errors and warnings
+
 #### 0.13.4
 
 * Fixed strong mode errors and warnings

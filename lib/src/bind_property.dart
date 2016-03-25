@@ -29,8 +29,7 @@ StreamSubscription onPropertyChange(
     Observable source, Symbol sourceName, void callback()) {
   return source.changes.listen((records) {
     for (var record in records) {
-      if (record is PropertyChangeRecord &&
-          (record as PropertyChangeRecord).name == sourceName) {
+      if (record is PropertyChangeRecord && record.name == sourceName) {
         callback();
         break;
       }

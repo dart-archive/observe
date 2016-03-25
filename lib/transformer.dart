@@ -9,8 +9,8 @@ library observe.transformer;
 import 'dart:async';
 
 import 'package:analyzer/analyzer.dart';
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/src/generated/ast.dart';
-import 'package:analyzer/src/generated/scanner.dart';
 import 'package:barback/barback.dart';
 import 'package:code_transformers/messages/build_logger.dart';
 import 'package:source_maps/refactor.dart';
@@ -27,6 +27,7 @@ class ObservableTransformer extends Transformer {
   final bool releaseMode;
   final bool injectBuildLogsInOutput;
   final List<String> _files;
+
   ObservableTransformer(
       {List<String> files, bool releaseMode, bool injectBuildLogsInOutput})
       : _files = files,
@@ -34,6 +35,7 @@ class ObservableTransformer extends Transformer {
         injectBuildLogsInOutput = injectBuildLogsInOutput == null
             ? releaseMode != true
             : injectBuildLogsInOutput;
+
   ObservableTransformer.asPlugin(BarbackSettings settings)
       : _files = _readFiles(settings.configuration['files']),
         releaseMode = settings.mode == BarbackMode.RELEASE,
@@ -41,10 +43,10 @@ class ObservableTransformer extends Transformer {
 
   static List<String> _readFiles(value) {
     if (value == null) return null;
-    var files = [];
+    var files = <String>[];
     bool error;
     if (value is List) {
-      files = value;
+      files = new List<String>.from(value);
       error = value.any((e) => e is! String);
     } else if (value is String) {
       files = [value];
@@ -58,8 +60,8 @@ class ObservableTransformer extends Transformer {
 
   // TODO(nweiz): This should just take an AssetId when barback <0.13.0 support
   // is dropped.
-  Future<bool> isPrimary(idOrAsset) {
-    var id = idOrAsset is AssetId ? idOrAsset : idOrAsset.id;
+  Future<bool> isPrimary(Object idOrAsset) {
+    var id = idOrAsset is AssetId ? idOrAsset : (idOrAsset as Asset).id;
     return new Future.value(id.extension == '.dart' &&
         (_files == null || _files.contains(id.path)));
   }
@@ -256,7 +258,7 @@ SimpleIdentifier _getSimpleIdentifier(Identifier id) =>
     id is PrefixedIdentifier ? id.identifier : id;
 
 bool _hasKeyword(Token token, Keyword keyword) =>
-    token is KeywordToken && token.keyword == keyword;
+    token?.type == TokenType.KEYWORD && token.lexeme == keyword.syntax;
 
 String _getOriginalCode(TextEditTransaction code, AstNode node) =>
     code.original.substring(node.offset, node.end);
@@ -282,7 +284,7 @@ void _fixConstructor(ConstructorDeclaration ctor, TextEditTransaction code,
   var thisInit = [];
   for (var param in ctor.parameters.parameters) {
     if (param is DefaultFormalParameter) {
-      param = param.parameter;
+      param = (param as DefaultFormalParameter).parameter;
     }
     if (param is FieldFormalParameter) {
       var name = param.identifier.name;

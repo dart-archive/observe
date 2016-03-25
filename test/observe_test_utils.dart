@@ -42,8 +42,10 @@ newMicrotask(_) => new Future.value();
 expectChanges(actual, expected, {reason}) =>
     expect('$actual', '$expected', reason: reason);
 
-List getListChangeRecords(List changes, int index) => changes
-    .where((c) => c.indexChanged(index)).toList();
+List<ListChangeRecord> getListChangeRecords(List changes, int index) =>
+    new List.from(changes.where((c) => c.indexChanged(index)));
 
-List getPropertyChangeRecords(List changes, Symbol property) => changes
-    .where((c) => c is PropertyChangeRecord && c.name == property).toList();
+List<PropertyChangeRecord> getPropertyChangeRecords(
+        List changes, Symbol property) =>
+    new List.from(
+        changes.where((c) => c is PropertyChangeRecord && c.name == property));

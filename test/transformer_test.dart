@@ -126,21 +126,20 @@ _testInitializers(String args, String expected) {
 }
 
 /// Helper that applies the transform by creating mock assets.
-Future<String> _transform(String code) {
-  return Chain.capture(() {
+Future _transform(String code) {
+  return Chain.capture(() async {
     var id = new AssetId('foo', 'a/b/c.dart');
     var asset = new Asset.fromString(id, code);
     var transformer = new ObservableTransformer();
-    return transformer.isPrimary(asset).then((isPrimary) {
-      expect(isPrimary, isTrue);
-      var transform = new _MockTransform(asset);
-      return transformer.apply(transform).then((_) {
-        expect(transform.outs, hasLength(2));
-        expect(transform.outs[0].id, id);
-        expect(transform.outs[1].id, id.addExtension('._buildLogs.1'));
-        return transform.outs.first.readAsString();
-      });
-    });
+    bool isPrimary = await transformer.isPrimary(asset);
+    expect(isPrimary, isTrue);
+    var transform = new _MockTransform(asset);
+    await transformer.apply(transform);
+
+    expect(transform.outs, hasLength(2));
+    expect(transform.outs[0].id, id);
+    expect(transform.outs[1].id, id.addExtension('._buildLogs.1'));
+    return transform.outs.first.readAsString();
   });
 }
 
