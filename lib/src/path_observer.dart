@@ -328,7 +328,7 @@ bool _setObjectProperty(object, property, value) {
 
 // From: https://github.com/rafaelw/ChangeSummary/blob/master/change_summary.js
 
-final _identRegExp = () {
+final RegExp _identRegExp = () {
   const identStart = '[\$_a-zA-Z]';
   const identPart = '[\$_a-zA-Z0-9]';
   return new RegExp('^$identStart+$identPart*\$');
