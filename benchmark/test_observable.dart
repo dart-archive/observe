@@ -5,7 +5,7 @@ library observe.test.benchmark.test_observable;
 
 import 'package:observe/observe.dart';
 
-class TestObservable extends Observable {
+class TestObservable extends AutoObservable {
   @observable int a = 0;
   @observable int b = 0;
   @observable int c = 0;

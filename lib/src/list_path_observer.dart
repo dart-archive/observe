@@ -5,6 +5,7 @@
 library observe.src.list_path_observer;
 
 import 'dart:async';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 
 // Inspired by ArrayReduction at:
@@ -13,7 +14,7 @@ import 'package:observe/observe.dart';
 
 /// Observes a path starting from each item in the list.
 @deprecated
-class ListPathObserver<E, P> extends ChangeNotifier {
+class ListPathObserver<E, P> extends Observable {
   final ObservableList<E> list;
   final String _itemPath;
   final List<PathObserver> _observers = <PathObserver>[];

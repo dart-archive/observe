@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'observe_test_utils.dart';
 
@@ -71,7 +72,7 @@ _runTests() {
 _nextMicrotask(_) => new Future(() {});
 
 @reflectable
-class TestModel extends ChangeNotifier {
+class TestModel extends Observable {
   var _a, _b;
   TestModel();
 

@@ -4,13 +4,15 @@
 
 /// Code transform for @observable. The core transformation is relatively
 /// straightforward, and essentially like an editor refactoring.
+@Deprecated('Parts of Observe used to support Polymer will move out of library')
 library observe.transformer;
 
 import 'dart:async';
 
 import 'package:analyzer/analyzer.dart';
-import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/src/generated/ast.dart';
+// GOOGLE3 edit: replaced 'package:analyzer/dart/ast/token.dart' by this import:
+import 'package:analyzer/src/generated/scanner.dart';
 import 'package:barback/barback.dart';
 import 'package:code_transformers/messages/build_logger.dart';
 import 'package:source_maps/refactor.dart';
@@ -158,10 +160,10 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   var implicitObservable = false;
   if (cls.extendsClause != null) {
     var id = _getSimpleIdentifier(cls.extendsClause.superclass.name);
-    if (id.name == 'Observable') {
-      code.edit(id.offset, id.end, 'ChangeNotifier');
+    if (id.name == 'AutoObservable') {
+      code.edit(id.offset, id.end, 'Observable');
       explicitObservable = true;
-    } else if (id.name == 'ChangeNotifier') {
+    } else if (id.name == 'Observable') {
       explicitObservable = true;
     } else if (id.name != 'HtmlElement' &&
         id.name != 'CustomElement' &&
@@ -175,11 +177,11 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   if (cls.withClause != null) {
     for (var type in cls.withClause.mixinTypes) {
       var id = _getSimpleIdentifier(type.name);
-      if (id.name == 'Observable') {
-        code.edit(id.offset, id.end, 'ChangeNotifier');
+      if (id.name == 'AutoObservable') {
+        code.edit(id.offset, id.end, 'Observable');
         explicitObservable = true;
         break;
-      } else if (id.name == 'ChangeNotifier') {
+      } else if (id.name == 'Observable') {
         explicitObservable = true;
         break;
       } else {
@@ -237,20 +239,20 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   }
 }
 
-/// Adds "with ChangeNotifier" and associated implementation.
+/// Adds "with Observable" and associated implementation.
 void _mixinObservable(ClassDeclaration cls, TextEditTransaction code) {
   // Note: we need to be careful to put the with clause after extends, but
   // before implements clause.
   if (cls.withClause != null) {
     var pos = cls.withClause.end;
-    code.edit(pos, pos, ', ChangeNotifier');
+    code.edit(pos, pos, ', Observable');
   } else if (cls.extendsClause != null) {
     var pos = cls.extendsClause.end;
-    code.edit(pos, pos, ' with ChangeNotifier ');
+    code.edit(pos, pos, ' with Observable ');
   } else {
     var params = cls.typeParameters;
     var pos = params != null ? params.end : cls.name.end;
-    code.edit(pos, pos, ' extends ChangeNotifier ');
+    code.edit(pos, pos, ' extends Observable ');
   }
 }
 

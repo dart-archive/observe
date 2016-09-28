@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 library observe.test.benchmark.observable_list_benchmark;
 
-import 'package:observe/observe.dart';
+import 'package:observable/observable.dart';
 import 'observation_benchmark_base.dart';
 
 class ObservableListBenchmark extends ObservationBenchmarkBase {

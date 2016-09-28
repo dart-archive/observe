@@ -9,6 +9,7 @@ import 'dart:collection';
 import 'dart:math' show min;
 
 import 'package:logging/logging.dart' show Logger, Level;
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:smoke/smoke.dart' as smoke;
 

@@ -4,19 +4,22 @@
 
 // TODO(jmesserly): can we handle this more elegantly?
 // In general, it seems like we want a convenient way to take a Stream plus a
-// getter and convert this into an Observable.
+// getter and convert this into an AutoObservable.
 
 /// Helpers for exposing dart:html as observable data.
+@Deprecated('Parts of Observe used to support Polymer will move out of library')
 library observe.html;
 
 import 'dart:html';
+
+import 'package:observable/observable.dart';
 
 import 'observe.dart';
 
 /// An observable version of [window.location.hash].
 final ObservableLocationHash windowLocation = new ObservableLocationHash._();
 
-class ObservableLocationHash extends ChangeNotifier {
+class ObservableLocationHash extends Observable {
   Object _currentHash;
 
   ObservableLocationHash._() {
@@ -67,7 +70,7 @@ void updateCssClass(Element element, String className, bool value) {
 /// Bind a CSS class to the observable [object] and property [path].
 @deprecated
 PathObserver bindCssClass(
-    Element element, String className, Observable object, String path) {
+    Element element, String className, AutoObservable object, String path) {
   callback(value) {
     updateCssClass(element, className, value);
   }

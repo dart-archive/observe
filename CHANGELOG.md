@@ -1,3 +1,7 @@
+#### 0.14.0
+
+* Update to be built on top of package:observable
+
 #### 0.13.5
 
 * Fixed strong mode errors and warnings
