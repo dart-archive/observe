@@ -24,7 +24,7 @@ import 'package:observe/observe.dart';
 /// ObserverTransform can also be used to reduce a set of observed values to a
 /// single value:
 ///
-///    var obj = new ObservableMap.from({'a': 1, 'b': 2, 'c': 3});
+///    var obj = new AutoObservableMap.from({'a': 1, 'b': 2, 'c': 3});
 ///    var observer = new CompoundObserver()
 ///      ..addPath(obj, 'a')
 ///      ..addPath(obj, 'b')

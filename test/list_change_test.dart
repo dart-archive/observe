@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'observe_test_utils.dart';
 

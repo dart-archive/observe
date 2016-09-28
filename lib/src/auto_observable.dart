@@ -1,35 +1,20 @@
-// Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2016, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-library observe.src.observable;
+library observe.src.auth_observable;
 
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:observable/observable.dart';
 import 'package:smoke/smoke.dart' as smoke;
-import 'package:observe/observe.dart';
 
-// Note: this is an internal library so we can import it from tests.
-// TODO(jmesserly): ideally we could import this with a prefix, but it caused
-// strange problems on the VM when I tested out the dirty-checking example
-// above.
-import 'dirty_check.dart';
+import 'dirty_check.dart' show dirtyCheckObservables, registerObservable;
+import 'metadata.dart' show ObservableProperty;
 
-/// Represents an object with observable properties. This is used by data in
-/// model-view architectures to notify interested parties of [changes] to the
-/// object's properties (fields or getter/setter pairs).
-///
-/// The interface does not require any specific technique to implement
-/// observability. You can implement it in the following ways:
-///
-/// - extend or mixin this class, and let the application call [dirtyCheck]
-///   periodically to check for changes to your object.
-/// - extend or mixin [ChangeNotifier], and implement change notifications
-///   manually by calling [notifyPropertyChange] from your setters.
-/// - implement this interface and provide your own implementation.
-abstract class Observable {
-  /// Performs dirty checking of objects that inherit from [Observable].
+abstract class AutoObservable implements Observable {
+  /// Performs dirty checking of objects that inherit from [AutoObservable].
   /// This scans all observed objects using mirrors and determines if any fields
   /// have changed. If they have, it delivers the changes for the object.
   static void dirtyCheck() => dirtyCheckObservables();
@@ -43,19 +28,22 @@ abstract class Observable {
   /// asynchronously.
   ///
   /// [deliverChanges] can be called to force synchronous delivery.
+  @override
   Stream<List<ChangeRecord>> get changes {
     if (_changes == null) {
       _changes = new StreamController.broadcast(
-          sync: true, onListen: _observed, onCancel: _unobserved);
+          sync: true, onListen: observed, onCancel: unobserved);
     }
     return _changes.stream;
   }
 
   /// True if this object has any observers, and should call
   /// [notifyChange] for changes.
+  @override
   bool get hasObservers => _changes != null && _changes.hasListener;
 
-  void _observed() {
+  @override
+  void observed() {
     // Register this object for dirty checking purposes.
     registerObservable(this);
 
@@ -79,7 +67,8 @@ abstract class Observable {
   }
 
   /// Release data associated with observation.
-  void _unobserved() {
+  @override
+  void unobserved() {
     // Note: we don't need to explicitly unregister from the dirty check list.
     // This will happen automatically at the next call to dirtyCheck.
     if (_values != null) {
@@ -107,6 +96,7 @@ abstract class Observable {
   // Also: we should be delivering changes to the observer (subscription) based
   // on the birth order of the observer. This is for compatibility with ES
   // Harmony as well as predictability for app developers.
+  @override
   bool deliverChanges() {
     if (_values == null || !hasObservers) return false;
 
@@ -119,7 +109,8 @@ abstract class Observable {
       var newValue = smoke.read(this, name);
       if (oldValue != newValue) {
         if (records == null) records = [];
-        records.add(new PropertyChangeRecord(this, name, oldValue, newValue));
+        records
+            .add(new PropertyChangeRecord(this, name, oldValue, newValue));
         _values[name] = newValue;
       }
     });
@@ -136,36 +127,32 @@ abstract class Observable {
   /// equal, no change will be recorded.
   ///
   /// For convenience this returns [newValue].
-  /*=T*/ notifyPropertyChange /*<T>*/ (
-          Symbol field, /*=T*/ oldValue, /*=T*/ newValue) =>
-      notifyPropertyChangeHelper(this, field, oldValue, newValue);
+  @override
+  /*=T*/ notifyPropertyChange/*<T>*/(
+      Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
+    if (hasObservers && oldValue != newValue) {
+      notifyChange(
+          new PropertyChangeRecord(this, field, oldValue, newValue));
+    }
+    return newValue;
+  }
 
   /// Notify observers of a change.
   ///
-  /// For most objects [Observable.notifyPropertyChange] is more convenient, but
-  /// collections sometimes deliver other types of changes such as a
-  /// [ListChangeRecord].
+  /// For most objects [AutoObservable.notifyPropertyChange] is more
+  /// convenient, but collections sometimes deliver other types of changes
+  /// such as a [ListChangeRecord].
   ///
   /// Notes:
-  /// - This is *not* required for fields if you mixin or extend [Observable],
-  ///   but you can use it for computed properties.
-  /// - Unlike [ChangeNotifier] this will not schedule [deliverChanges]; use
-  ///   [Observable.dirtyCheck] instead.
+  /// - This is *not* required for fields if you mixin or extend
+  ///   [AutoObservable], but you can use it for computed properties.
+  /// - Unlike [Observable] this will not schedule [deliverChanges]; use
+  ///   [AutoObservable.dirtyCheck] instead.
+  @override
   void notifyChange(ChangeRecord record) {
     if (!hasObservers) return;
 
     if (_records == null) _records = [];
     _records.add(record);
   }
-}
-
-// TODO(jmesserly): remove the instance method and make this top-level method
-// public instead?
-// NOTE: this is not exported publically.
-/*=T*/ notifyPropertyChangeHelper /*<T>*/ (
-    Observable obj, Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
-  if (obj.hasObservers && oldValue != newValue) {
-    obj.notifyChange(new PropertyChangeRecord(obj, field, oldValue, newValue));
-  }
-  return newValue;
 }

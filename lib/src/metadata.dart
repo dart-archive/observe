@@ -6,13 +6,13 @@ library observe.src.metadata;
 
 /// Use `@observable` to make a field automatically observable, or to indicate
 /// that a property is observable. This only works on classes that extend or
-/// mix in `Observable`.
+/// mix in `AutoObservable`.
 const ObservableProperty observable = const ObservableProperty();
 
 /// An annotation that is used to make a property observable.
 /// Normally this is used via the [observable] constant, for example:
 ///
-///     class Monster extends Observable {
+///     class Monster extends AutoObservable {
 ///       @observable int health;
 ///     }
 ///
@@ -37,7 +37,7 @@ const Reflectable reflectable = const Reflectable();
 /// it available to `PathObserver` at runtime. For example:
 ///
 ///     @reflectable
-///     class Monster extends ChangeNotifier {
+///     class Monster extends Observable {
 ///       int _health;
 ///       int get health => _health;
 ///       ...

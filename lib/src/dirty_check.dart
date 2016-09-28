@@ -13,29 +13,32 @@
 library observe.src.dirty_check;
 
 import 'dart:async';
+
 import 'package:func/func.dart';
 import 'package:logging/logging.dart';
-import 'package:observe/observe.dart' show Observable;
+import 'package:observable/observable.dart' as obs show Observable;
+
+import 'auto_observable.dart' show AutoObservable;
 
 /// The number of active observables in the system.
 int get allObservablesCount => _allObservablesCount;
 
 int _allObservablesCount = 0;
 
-List<Observable> _allObservables = null;
+List<obs.Observable> _allObservables = null;
 
 bool _delivering = false;
 
-void registerObservable(Observable obj) {
-  if (_allObservables == null) _allObservables = <Observable>[];
+void registerObservable(obs.Observable obj) {
+  if (_allObservables == null) _allObservables = <obs.Observable>[];
   _allObservables.add(obj);
   _allObservablesCount++;
 }
 
 /// Synchronously deliver all change records for known observables.
 ///
-/// This will execute [Observable.deliverChanges] on objects that inherit from
-/// [Observable].
+/// This will execute [AutoObservable.deliverChanges] on objects that inherit from
+/// [AutoObservable].
 // Note: this is called performMicrotaskCheckpoint in change_summary.js.
 void dirtyCheckObservables() {
   if (_delivering) return;
@@ -53,7 +56,7 @@ void dirtyCheckObservables() {
     }
 
     var toCheck = _allObservables;
-    _allObservables = <Observable>[];
+    _allObservables = <obs.Observable>[];
     anyChanged = false;
 
     for (int i = 0; i < toCheck.length; i++) {
@@ -69,10 +72,10 @@ void dirtyCheckObservables() {
   } while (cycles < MAX_DIRTY_CHECK_CYCLES && anyChanged);
 
   if (debugLoop != null && anyChanged) {
-    _logger.warning('Possible loop in Observable.dirtyCheck, stopped '
+    _logger.warning('Possible loop in AutoObservable.dirtyCheck, stopped '
         'checking.');
     for (final info in debugLoop) {
-      _logger.warning('In last iteration Observable changed at index '
+      _logger.warning('In last iteration AutoObservable changed at index '
           '${info[0]}, object: ${info[1]}.');
     }
   }
@@ -85,7 +88,7 @@ const MAX_DIRTY_CHECK_CYCLES = 1000;
 
 /// Log for messages produced at runtime by this library. Logging can be
 /// configured by accessing Logger.root from the logging library.
-final Logger _logger = new Logger('Observable.dirtyCheck');
+final Logger _logger = new Logger('AutoObservable.dirtyCheck');
 
 /// Creates a [ZoneSpecification] to set up automatic dirty checking after each
 /// batch of async operations. This ensures that change notifications are always
@@ -100,7 +103,7 @@ ZoneSpecification dirtyCheckZoneSpec() {
     pending = true;
     parent.scheduleMicrotask(zone, () {
       pending = false;
-      Observable.dirtyCheck();
+      AutoObservable.dirtyCheck();
     });
   }
 

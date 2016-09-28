@@ -38,8 +38,8 @@ const NO_OBSERVABLE_ON_STATIC_FIELD = const MessageTemplate(
 const REQUIRE_OBSERVABLE_INTERFACE = const MessageTemplate(
     const MessageId('observe', 5),
     'Observable fields must be in observable objects. '
-    'Change this class to extend, mix in, or implement Observable.',
-    '`@observable` field not in an `Observable` class',
+    'Change this class to extend, mix in, or implement AutoObservable.',
+    '`@observable` field not in an `AutoObservable` class',
     _COMMON_MESSAGE_WHERE_TO_USE_OBSERVABLE);
 
 const String _COMMON_MESSAGE_WHERE_TO_USE_OBSERVABLE = '''
