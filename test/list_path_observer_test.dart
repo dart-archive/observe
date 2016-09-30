@@ -19,7 +19,7 @@ main() {
 _runTests() {
   var list;
   var obs;
-  var o1, o2, o3;
+  var o1, o2;
   var sub;
   int changes;
 
@@ -27,7 +27,7 @@ _runTests() {
     list = toObservable([
       o1 = new TestModel()..a = (new TestModel()..b = 1),
       o2 = new TestModel()..a = (new TestModel()..b = 2),
-      o3 = new TestModel()..a = (new TestModel()..b = 3)
+      new TestModel()..a = (new TestModel()..b = 3)
     ]);
     obs = new ListPathObserver(list, 'a.b');
     changes = 0;
@@ -38,7 +38,7 @@ _runTests() {
 
   tearDown(() {
     sub.cancel();
-    list = obs = o1 = o2 = o3 = null;
+    list = obs = o1 = o2 = null;
   });
 
   test('list path observer noticed length changes', () {
