@@ -11,7 +11,6 @@ import 'dart:async';
 
 import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/src/generated/ast.dart';
-// GOOGLE3 edit: replaced 'package:analyzer/dart/ast/token.dart' by this import:
 import 'package:analyzer/src/generated/scanner.dart';
 import 'package:barback/barback.dart';
 import 'package:code_transformers/messages/build_logger.dart';

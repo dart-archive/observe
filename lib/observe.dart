@@ -9,8 +9,7 @@ library observe;
 // We port what is needed for data bindings. Most of the functionality is
 // ported, except where differences are needed for Dart's AutoObservable type.
 
-export 'package:observable/observable.dart'
-    show ChangeRecord, ListChangeRecord, MapChangeRecord, PropertyChangeRecord;
+export 'package:observable/observable.dart';
 export 'src/auto_observable.dart';
 export 'src/bindable.dart';
 export 'src/bind_property.dart';
