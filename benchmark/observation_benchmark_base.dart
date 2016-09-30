@@ -10,7 +10,8 @@ import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-abstract class ObservationBenchmarkBase extends BenchmarkBase {
+abstract class ObservationBenchmarkBase<T extends Observable>
+    extends BenchmarkBase {
   /// The number of objects to create and observe.
   final int objectCount;
 
@@ -24,7 +25,7 @@ abstract class ObservationBenchmarkBase extends BenchmarkBase {
   int mutations;
 
   /// The objects we want to observe.
-  List<Observable> objects;
+  List<T> objects;
 
   /// The change listeners on all of our objects.
   List observers;
@@ -38,17 +39,17 @@ abstract class ObservationBenchmarkBase extends BenchmarkBase {
 
   /// Subclasses should use this method to perform mutations on an object. The
   /// return value indicates how many mutations were performed on the object.
-  int mutateObject(obj);
+  int mutateObject(T obj);
 
   /// Subclasses should use this method to return an observable object to be
   /// benchmarked.
-  Observable newObject();
+  T newObject();
 
   /// Subclasses should override this to do anything other than a default change
   /// listener. It must return either a StreamSubscription or a PathObserver.
   /// If overridden this observer should decrement [mutations] each time a
   /// change is observed.
-  newObserver(obj) {
+  newObserver(T obj) {
     decrement(_) => mutations--;
     if (obj is ObservableList) return obj.listChanges.listen(decrement);
     return obj.changes.listen(decrement);

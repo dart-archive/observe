@@ -9,7 +9,8 @@ import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-abstract class SetupObservationBenchmarkBase extends BenchmarkBase {
+abstract class SetupObservationBenchmarkBase<T extends Observable>
+    extends BenchmarkBase {
   /// The number of objects to create and observe.
   final int objectCount;
 
@@ -17,18 +18,18 @@ abstract class SetupObservationBenchmarkBase extends BenchmarkBase {
   final String config;
 
   /// The objects we want to observe.
-  List<Observable> objects;
+  List<T> objects;
 
   SetupObservationBenchmarkBase(String name, this.objectCount, this.config)
       : super(name);
 
   /// Subclasses should use this method to return an observable object to be
   /// benchmarked.
-  Observable newObject();
+  T newObject();
 
   /// Subclasses should override this to do anything other than a default change
   /// listener. It must return either a StreamSubscription or a PathObserver.
-  newObserver(obj) => obj.changes.listen((_) {});
+  newObserver(T obj) => obj.changes.listen((_) {});
 
   /// Set up each benchmark by creating all the objects.
   @override

@@ -7,7 +7,8 @@ import 'package:observe/observe.dart';
 import 'setup_observation_benchmark_base.dart';
 import 'test_path_observable.dart';
 
-class SetupPathBenchmark extends SetupObservationBenchmarkBase {
+class SetupPathBenchmark
+    extends SetupObservationBenchmarkBase<TestPathObservable> {
   final PropertyPath path = new PropertyPath('foo.bar.baz');
 
   SetupPathBenchmark(int objectCount, String config)

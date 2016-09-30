@@ -6,7 +6,7 @@ library observe.test.benchmark.observable_list_benchmark;
 import 'package:observable/observable.dart';
 import 'observation_benchmark_base.dart';
 
-class ObservableListBenchmark extends ObservationBenchmarkBase {
+class ObservableListBenchmark extends ObservationBenchmarkBase<ObservableList> {
   final int elementCount = 100;
 
   ObservableListBenchmark(int objectCount, int mutationCount, String config)

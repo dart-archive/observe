@@ -6,7 +6,7 @@ library observe.test.benchmark.object_benchmark;
 import 'observation_benchmark_base.dart';
 import 'test_observable.dart';
 
-class ObjectBenchmark extends ObservationBenchmarkBase {
+class ObjectBenchmark extends ObservationBenchmarkBase<TestObservable> {
   ObjectBenchmark(int objectCount, int mutationCount, String config)
       : super('ObjectBenchmark:$objectCount:$mutationCount:$config',
             objectCount, mutationCount, config);
