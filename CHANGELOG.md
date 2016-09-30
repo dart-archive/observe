@@ -1,3 +1,17 @@
+#### 0.14.0
+
+* Update to be built on top of `package:observable`. Contains the following
+  breaking changes:
+  - `Observable` now lives in `package:observable` and behaves like the old
+    `ChangeNotifier` did (except that it's now the base class) - with subclasses
+    manually notifying listeners of changes via `notifyPropertyChange()`.
+  - `ChangeNotifier` has been removed.
+  - `ObservableList` has been moved to `package:observable`.
+  - `ObservableMap` has been moved to `package:observable`.
+  - `toObservable()` has been moved to `package:observable`.
+  - `Observable` (the one with dirty checking) in `package:observe` has been
+    renamed `AutoObservable`
+
 #### 0.13.5
 
 * Fixed strong mode errors and warnings

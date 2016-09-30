@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/path_observer.dart'
     show getSegmentsOfPropertyPathForTesting,
@@ -711,7 +712,7 @@ class IndexerModel implements Indexable<String, dynamic> {
 }
 
 @reflectable
-class TestModel extends ChangeNotifier implements WatcherModel {
+class TestModel extends Observable implements WatcherModel {
   var _a, _b, _c;
 
   TestModel([this._a, this._b, this._c]);
@@ -735,7 +736,7 @@ class TestModel extends ChangeNotifier implements WatcherModel {
   }
 }
 
-class WatcherModel extends Observable {
+class WatcherModel extends AutoObservable {
   // TODO(jmesserly): dart2js does not let these be on the same line:
   // @observable var a, b, c;
   @observable var a;
