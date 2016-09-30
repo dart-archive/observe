@@ -5,6 +5,8 @@ library observe.test.benchmark.observation_benchmark_base;
 
 import 'dart:async';
 import 'dart:html';
+
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:benchmark_harness/benchmark_harness.dart';
 
@@ -112,6 +114,6 @@ abstract class ObservationBenchmarkBase extends BenchmarkBase {
       obj.deliverChanges();
       if (obj is ObservableList) obj.deliverListChanges();
     }
-    Observable.dirtyCheck();
+    AutoObservable.dirtyCheck();
   }
 }

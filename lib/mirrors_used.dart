@@ -6,6 +6,7 @@
 /// if you were to use observables together with mirrors. By default this is not
 /// included because frameworks using this package also use code generation to
 /// avoid using mirrors at deploy time.
+@Deprecated('Parts of Observe used to support Polymer will move out of library')
 library observe.mirrors_used;
 
 // Note: ObservableProperty is in this list only for the unusual use case of

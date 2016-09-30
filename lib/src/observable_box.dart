@@ -4,15 +4,16 @@
 
 library observe.src.observable_box;
 
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 
 // TODO(jmesserly): should the property name be configurable?
 // That would be more convenient.
 /// An observable box that holds a value. Use this if you want to store a single
-/// value. For other cases, it is better to use [ObservableList],
-/// [ObservableMap], or a custom [Observable] implementation based on
-/// [Observable]. The property name for changes is "value".
-class ObservableBox<T> extends ChangeNotifier {
+/// value. For other cases, it is better to use [AutoObservableList],
+/// [AutoObservableMap], or a custom [AutoObservable] implementation based on
+/// [AutoObservable]. The property name for changes is "value".
+class ObservableBox<T> extends Observable {
   T _value;
 
   ObservableBox([T initialValue]) : _value = initialValue;

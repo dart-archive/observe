@@ -5,6 +5,7 @@ library observe.test.benchmark.setup_observation_benchmark_base;
 
 import 'dart:async';
 import 'dart:html';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:benchmark_harness/benchmark_harness.dart';
 

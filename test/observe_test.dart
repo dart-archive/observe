@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:logging/logging.dart';
+import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/dirty_check.dart' as dirty_check;
 import 'observe_test_utils.dart';
@@ -18,7 +19,7 @@ main() {
 }
 
 void _tests() {
-  // Note: to test the basic Observable system, we use ObservableBox due to its
+  // Note: to test the basic AutoObservable system, we use ObservableBox due to its
   // simplicity. We also test a variant that is based on dirty-checking.
 
   test('no observers at the start', () {
@@ -55,7 +56,7 @@ void _tests() {
         x.value++;
       });
       x.value = 1;
-      Observable.dirtyCheck();
+      AutoObservable.dirtyCheck();
       expect(called, maxNumIterations);
       expect(x.value, maxNumIterations + 1);
       expect(messages.length, 2);
@@ -70,7 +71,7 @@ void _tests() {
 }
 
 void _observeTests(createModel(x)) {
-  final watch = createModel(null) is! ChangeNotifier;
+  final watch = createModel(null) is! Observable;
 
   // Track the subscriptions so we can clean them up in tearDown.
   List subs;
@@ -80,14 +81,14 @@ void _observeTests(createModel(x)) {
     initialObservers = dirty_check.allObservablesCount;
     subs = [];
 
-    if (watch) scheduleMicrotask(Observable.dirtyCheck);
+    if (watch) scheduleMicrotask(AutoObservable.dirtyCheck);
   });
 
   tearDown(() {
     for (var sub in subs) sub.cancel();
     return new Future(() {
       expect(dirty_check.allObservablesCount, initialObservers,
-          reason: 'Observable object leaked');
+          reason: 'AutoObservable object leaked');
     });
   });
 
@@ -176,7 +177,7 @@ void _observeTests(createModel(x)) {
       expectPropertyChanges(records, 1);
 
       // Has no effect if there are no changes
-      Observable.dirtyCheck();
+      AutoObservable.dirtyCheck();
       expectPropertyChanges(records, 1);
     });
   });
@@ -188,7 +189,7 @@ void _observeTests(createModel(x)) {
       expectPropertyChanges(records, 1);
       sub.cancel();
       t.value = 777;
-      scheduleMicrotask(Observable.dirtyCheck);
+      scheduleMicrotask(AutoObservable.dirtyCheck);
     }));
     t.value = 42;
   });
@@ -205,7 +206,7 @@ void _observeTests(createModel(x)) {
           expectPropertyChanges(records, 1);
         })));
         t.value = 777;
-        scheduleMicrotask(Observable.dirtyCheck);
+        scheduleMicrotask(AutoObservable.dirtyCheck);
       });
     }));
     t.value = 42;
@@ -279,7 +280,7 @@ expectPropertyChanges(records, int number) {
 }
 
 // A test model based on dirty checking.
-class WatcherModel<T> extends Observable {
+class WatcherModel<T> extends AutoObservable {
   @observable T value;
 
   WatcherModel([T initialValue]) : value = initialValue;
