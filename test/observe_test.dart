@@ -28,9 +28,11 @@ void _tests() {
 
   group('WatcherModel', () => _observeTests(true, (x) => new WatcherModel(x)));
 
-  group('ObservableBox', () => _observeTests(false, (x) => new ObservableBox(x)));
+  group(
+      'ObservableBox', () => _observeTests(false, (x) => new ObservableBox(x)));
 
-  group('ModelSubclass', () => _observeTests(true, (x) => new ModelSubclass(x)));
+  group(
+      'ModelSubclass', () => _observeTests(true, (x) => new ModelSubclass(x)));
 
   group('dirtyCheck loops can be debugged', () {
     var messages;
@@ -279,7 +281,8 @@ expectPropertyChanges(records, int number) {
 
 // A test model based on dirty checking.
 class WatcherModel<T> extends AutoObservable {
-  @observable T value;
+  @observable
+  T value;
 
   WatcherModel([T initialValue]) : value = initialValue;
 

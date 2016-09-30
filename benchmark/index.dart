@@ -22,15 +22,15 @@ typedef BenchmarkBase BenchmarkFactory(
     int objectCount, int mutationCount, String config);
 final Map<String, BenchmarkFactory> benchmarkFactories = {
   'ObjectBenchmark': (int o, int m, String c) => new ObjectBenchmark(o, m, c),
-  'SetupObjectBenchmark':
-      (int o, int m, String c) => new SetupObjectBenchmark(o, c),
-  'ObservableListBenchmark':
-      (int o, int m, String c) => new ObservableListBenchmark(o, m, c),
-  'SetupObservableListBenchmark':
-      (int o, int m, String c) => new SetupObservableListBenchmark(o, c),
+  'SetupObjectBenchmark': (int o, int m, String c) =>
+      new SetupObjectBenchmark(o, c),
+  'ObservableListBenchmark': (int o, int m, String c) =>
+      new ObservableListBenchmark(o, m, c),
+  'SetupObservableListBenchmark': (int o, int m, String c) =>
+      new SetupObservableListBenchmark(o, c),
   'PathBenchmark': (int o, int m, String c) => new PathBenchmark(o, m, c),
-  'SetupPathBenchmark':
-      (int o, int m, String c) => new SetupPathBenchmark(o, c),
+  'SetupPathBenchmark': (int o, int m, String c) =>
+      new SetupPathBenchmark(o, c),
 };
 
 /// Benchmark names to possible configs.
@@ -136,7 +136,9 @@ void drawBenchmarks(List<List<double>> results) {
     'datasets': datasets,
   };
 
-  new Line(data, {'bezierCurve': false,}).show(canvasWrapper);
+  new Line(data, {
+    'bezierCurve': false,
+  }).show(canvasWrapper);
   goButton.disabled = false;
   goButton.text = 'Run Benchmarks';
   statusSpan.text = '';

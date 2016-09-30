@@ -11,7 +11,7 @@ class ObservableListBenchmark extends ObservationBenchmarkBase {
 
   ObservableListBenchmark(int objectCount, int mutationCount, String config)
       : super('ObservableListBenchmark:$objectCount:$mutationCount:$config',
-          objectCount, mutationCount, config);
+            objectCount, mutationCount, config);
 
   @override
   int mutateObject(ObservableList obj) {

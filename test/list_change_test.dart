@@ -29,7 +29,9 @@ listChangeTests() {
     model.add(0);
 
     var summary;
-    sub = model.listChanges.listen((r) { summary = r; });
+    sub = model.listChanges.listen((r) {
+      summary = r;
+    });
 
     model.add(1);
     model.add(2);
@@ -42,35 +44,36 @@ listChangeTests() {
     model = toObservable(['a', 'b', 'c', 'd', 'e']);
 
     var summary;
-    sub = model.listChanges.listen((r) { summary = r; });
+    sub = model.listChanges.listen((r) {
+      summary = r;
+    });
 
     model.length = 2;
 
     return new Future(() {
-      expectChanges(summary, [_delta(2, ['c', 'd', 'e'], 0)]);
+      expectChanges(summary, [
+        _delta(2, ['c', 'd', 'e'], 0)
+      ]);
       summary = null;
       model.length = 5;
-
     }).then(newMicrotask).then((_) {
-
       expectChanges(summary, [_delta(2, [], 3)]);
     });
   });
 
   group('List deltas can be applied', () {
-
     applyAndCheckDeltas(model, copy, changes) => changes.then((summary) {
-      // apply deltas to the copy
-      for (var delta in summary) {
-        copy.removeRange(delta.index, delta.index + delta.removed.length);
-        for (int i = delta.addedCount - 1; i >= 0; i--) {
-          copy.insert(delta.index, model[delta.index + i]);
-        }
-      }
+          // apply deltas to the copy
+          for (var delta in summary) {
+            copy.removeRange(delta.index, delta.index + delta.removed.length);
+            for (int i = delta.addedCount - 1; i >= 0; i--) {
+              copy.insert(delta.index, model[delta.index + i]);
+            }
+          }
 
-      // Note: compare strings for easier debugging.
-      expect('$copy', '$model', reason: 'summary $summary');
-    });
+          // Note: compare strings for easier debugging.
+          expect('$copy', '$model', reason: 'summary $summary');
+        });
 
     test('Contained', () {
       var model = toObservable(['a', 'b']);
@@ -204,7 +207,7 @@ listChangeTests() {
       var changes = model.listChanges.first;
 
       model.removeAt(2);
-      model.insertAll(2, ['e', 'f', 'g']);  // a b [e f g] d
+      model.insertAll(2, ['e', 'f', 'g']); // a b [e f g] d
       model[0] = 'h';
       model.removeAt(1);
 
@@ -223,15 +226,14 @@ listChangeTests() {
   });
 
   group('edit distance', () {
-
     assertEditDistance(orig, changes, expectedDist) => changes.then((summary) {
-      var actualDistance = 0;
-      for (var delta in summary) {
-        actualDistance += delta.addedCount + delta.removed.length;
-      }
+          var actualDistance = 0;
+          for (var delta in summary) {
+            actualDistance += delta.addedCount + delta.removed.length;
+          }
 
-      expect(actualDistance, expectedDist);
-    });
+          expect(actualDistance, expectedDist);
+        });
 
     test('add items', () {
       var model = toObservable([]);

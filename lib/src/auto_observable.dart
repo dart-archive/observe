@@ -109,8 +109,7 @@ abstract class AutoObservable implements Observable {
       var newValue = smoke.read(this, name);
       if (oldValue != newValue) {
         if (records == null) records = [];
-        records
-            .add(new PropertyChangeRecord(this, name, oldValue, newValue));
+        records.add(new PropertyChangeRecord(this, name, oldValue, newValue));
         _values[name] = newValue;
       }
     });
@@ -131,8 +130,7 @@ abstract class AutoObservable implements Observable {
   /*=T*/ notifyPropertyChange/*<T>*/(
       Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
     if (hasObservers && oldValue != newValue) {
-      notifyChange(
-          new PropertyChangeRecord(this, field, oldValue, newValue));
+      notifyChange(new PropertyChangeRecord(this, field, oldValue, newValue));
     }
     return newValue;
   }

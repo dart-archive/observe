@@ -18,9 +18,11 @@ class ObservableBox<T> extends Observable {
 
   ObservableBox([T initialValue]) : _value = initialValue;
 
-  @reflectable T get value => _value;
+  @reflectable
+  T get value => _value;
 
-  @reflectable void set value(T newValue) {
+  @reflectable
+  void set value(T newValue) {
     _value = notifyPropertyChange(#value, _value, newValue);
   }
 

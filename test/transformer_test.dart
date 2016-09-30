@@ -11,8 +11,8 @@ import 'package:test/test.dart';
 main() {
   group('replaces AutoObservable for Observable', () {
     _testClause('extends AutoObservable', 'extends Observable');
-    _testClause('extends Base with AutoObservable',
-        'extends Base with Observable');
+    _testClause(
+        'extends Base with AutoObservable', 'extends Base with Observable');
     _testClause('extends Base<T> with AutoObservable',
         'extends Base<T> with Observable');
     _testClause('extends Base with Mixin, AutoObservable',
@@ -29,8 +29,7 @@ main() {
         'extends Observable implements Interface<T>');
     _testClause('extends Base with AutoObservable implements Interface',
         'extends Base with Observable implements Interface');
-    _testClause(
-        'extends Base with Mixin, AutoObservable implements I1, I2',
+    _testClause('extends Base with Mixin, AutoObservable implements I1, I2',
         'extends Base with Mixin, Observable implements I1, I2');
   });
 
@@ -38,14 +37,14 @@ main() {
     _testClause('', 'extends Observable');
     _testClause('extends Base', 'extends Base with Observable');
     _testClause('extends Base<T>', 'extends Base<T> with Observable');
-    _testClause('extends Base with Mixin',
-        'extends Base with Mixin, Observable');
-    _testClause('extends Base with Mixin<T>',
-        'extends Base with Mixin<T>, Observable');
+    _testClause(
+        'extends Base with Mixin', 'extends Base with Mixin, Observable');
+    _testClause(
+        'extends Base with Mixin<T>', 'extends Base with Mixin<T>, Observable');
     _testClause('extends Base with Mixin, Mixin2',
         'extends Base with Mixin, Mixin2, Observable');
-    _testClause('implements Interface',
-        'extends Observable implements Interface');
+    _testClause(
+        'implements Interface', 'extends Observable implements Interface');
     _testClause('implements Interface<T>',
         'extends Observable implements Interface<T>');
     _testClause('extends Base implements Interface',
@@ -65,22 +64,27 @@ main() {
     _testInitializers('this.a, {this.b}', '(a, {b}) : __\$a = a, __\$b = b');
   });
 
-  var annotations =  ['observable', 'published',
-      'ObservableProperty()', 'PublishedProperty(reflect: true)'];
+  var annotations = [
+    'observable',
+    'published',
+    'ObservableProperty()',
+    'PublishedProperty(reflect: true)'
+  ];
   for (var annotation in annotations) {
     group('@$annotation full text', () {
       test('with changes', () {
-        return _transform(_sampleObservable(annotation)).then(
-            (out) => expect(out, _sampleObservableOutput(annotation)));
+        return _transform(_sampleObservable(annotation))
+            .then((out) => expect(out, _sampleObservableOutput(annotation)));
       });
 
       test('complex with changes', () {
-        return _transform(_complexObservable(annotation)).then(
-            (out) => expect(out, _complexObservableOutput(annotation)));
+        return _transform(_complexObservable(annotation))
+            .then((out) => expect(out, _complexObservableOutput(annotation)));
       });
 
       test('no changes', () {
-        var input = 'class A {/*@$annotation annotation to trigger transform */;}';
+        var input =
+            'class A {/*@$annotation annotation to trigger transform */;}';
         return _transform(input).then((output) => expect(output, input));
       });
     });
@@ -98,8 +102,10 @@ _testClause(String clauses, String expected) {
 
     return _transform(code).then((output) {
       var classPos = output.indexOf(className) + className.length;
-      var actualClauses = output.substring(classPos,
-        output.indexOf('{')).trim().replaceAll('  ', ' ');
+      var actualClauses = output
+          .substring(classPos, output.indexOf('{'))
+          .trim()
+          .replaceAll('  ', ' ');
       expect(actualClauses, expected);
     });
   });
@@ -170,8 +176,7 @@ class _MockTransform implements Transform {
   hasInput(id) =>
       new Future.value(id == _asset.id || outs.any((a) => a.id == id));
 
-  static void _mockLogFn(AssetId asset, LogLevel level, String message,
-                         span) {
+  static void _mockLogFn(AssetId asset, LogLevel level, String message, span) {
     // Do nothing.
   }
 }
@@ -186,12 +191,11 @@ class A extends AutoObservable {
 }
 ''';
 
-String _sampleObservableOutput(String annotation) =>
-    "library A_foo;\n"
+String _sampleObservableOutput(String annotation) => "library A_foo;\n"
     "import 'package:observe/observe.dart';\n\n"
     "class A extends Observable {\n"
     "  @reflectable @$annotation int get foo => __\$foo; int __\$foo; "
-      "${_makeSetter('int', 'foo')}\n"
+    "${_makeSetter('int', 'foo')}\n"
     "  A(foo) : __\$foo = foo;\n"
     "}\n";
 
@@ -216,11 +220,11 @@ String _complexObservableOutput(String meta) =>
     "  @otherMetadata\n"
     "      Foo\n"
     "          get foo => __\$foo; Foo __\$foo/*D*/= 1; "
-        "${_makeSetter('Foo', 'foo')} "
-        "@reflectable @$meta @otherMetadata Foo get bar => __\$bar; "
-        "Foo __\$bar =/*A*/2/*B*/; ${_makeSetter('Foo', 'bar')}\n"
+    "${_makeSetter('Foo', 'foo')} "
+    "@reflectable @$meta @otherMetadata Foo get bar => __\$bar; "
+    "Foo __\$bar =/*A*/2/*B*/; ${_makeSetter('Foo', 'bar')}\n"
     "          @reflectable @$meta @otherMetadata Foo get quux => __\$quux; "
-        "Foo __\$quux/*C*/; ${_makeSetter('Foo', 'quux')}\n\n"
+    "Foo __\$quux/*C*/; ${_makeSetter('Foo', 'quux')}\n\n"
     "  @reflectable @$meta dynamic get baz => __\$baz; dynamic __\$baz; "
-        "${_makeSetter('dynamic', 'baz')}\n"
+    "${_makeSetter('dynamic', 'baz')}\n"
     "}\n";

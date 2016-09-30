@@ -9,9 +9,9 @@ import 'setup_observation_benchmark_base.dart';
 class SetupObservableListBenchmark extends SetupObservationBenchmarkBase {
   final int elementCount = 100;
 
-  SetupObservableListBenchmark(int objectCount, String config) : super(
-          'SetupObservableListBenchmark:$objectCount:$config', objectCount,
-          config);
+  SetupObservableListBenchmark(int objectCount, String config)
+      : super('SetupObservableListBenchmark:$objectCount:$config', objectCount,
+            config);
 
   @override
   ObservableList newObject() {

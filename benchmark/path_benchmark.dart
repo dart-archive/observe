@@ -10,9 +10,9 @@ import 'test_path_observable.dart';
 class PathBenchmark extends ObservationBenchmarkBase {
   final PropertyPath path = new PropertyPath('foo.bar.baz');
 
-  PathBenchmark(int objectCount, int mutationCount, String config) : super(
-          'PathBenchmark:$objectCount:$mutationCount:$config', objectCount,
-          mutationCount, config);
+  PathBenchmark(int objectCount, int mutationCount, String config)
+      : super('PathBenchmark:$objectCount:$mutationCount:$config', objectCount,
+            mutationCount, config);
 
   @override
   int mutateObject(TestPathObservable obj) {

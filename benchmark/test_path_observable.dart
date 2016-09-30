@@ -6,19 +6,22 @@ library observe.test.benchmark.test_observable;
 import 'package:observe/observe.dart';
 
 class Bar extends AutoObservable {
-  @observable int baz;
+  @observable
+  int baz;
 
   Bar(this.baz);
 }
 
 class Foo extends AutoObservable {
-  @observable Bar bar;
+  @observable
+  Bar bar;
 
   Foo(int value) : bar = new Bar(value);
 }
 
 class TestPathObservable extends AutoObservable {
-  @observable Foo foo;
+  @observable
+  Foo foo;
 
   TestPathObservable(int value) : foo = new Foo(value);
 }

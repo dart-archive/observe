@@ -27,8 +27,9 @@ main() {
       var name = MirrorSystem.getName(symbol);
       if (field is! Message) return;
       var id = field.id;
-      expect(seen.containsKey(id), isFalse, reason: 'Duplicate id `$id`. '
-          'Currently set for both `$name` and `${seen[id]}`.');
+      expect(seen.containsKey(id), isFalse,
+          reason: 'Duplicate id `$id`. '
+              'Currently set for both `$name` and `${seen[id]}`.');
       seen[id] = name;
       total++;
     });

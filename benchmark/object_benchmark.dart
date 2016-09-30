@@ -7,9 +7,9 @@ import 'observation_benchmark_base.dart';
 import 'test_observable.dart';
 
 class ObjectBenchmark extends ObservationBenchmarkBase {
-  ObjectBenchmark(int objectCount, int mutationCount, String config) : super(
-          'ObjectBenchmark:$objectCount:$mutationCount:$config', objectCount,
-          mutationCount, config);
+  ObjectBenchmark(int objectCount, int mutationCount, String config)
+      : super('ObjectBenchmark:$objectCount:$mutationCount:$config',
+            objectCount, mutationCount, config);
 
   @override
   int mutateObject(TestObservable obj) {

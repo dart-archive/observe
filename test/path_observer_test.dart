@@ -6,8 +6,7 @@ import 'dart:async';
 import 'package:observable/observable.dart';
 import 'package:observe/observe.dart';
 import 'package:observe/src/path_observer.dart'
-    show getSegmentsOfPropertyPathForTesting,
-         observerSentinelForTesting;
+    show getSegmentsOfPropertyPathForTesting, observerSentinelForTesting;
 
 import 'observe_test_utils.dart';
 
@@ -71,8 +70,8 @@ main() {
       expectPath(' [1234567890] ', '[1234567890]', 1, [1234567890]);
       expectPath('opt0', 'opt0', 1, [#opt0]);
       // Dart note: Modified to avoid a private Dart symbol:
-      expectPath(r'$foo.$bar.baz_', r'$foo.$bar.baz_', 3,
-          [#$foo, #$bar, #baz_]);
+      expectPath(
+          r'$foo.$bar.baz_', r'$foo.$bar.baz_', 3, [#$foo, #$bar, #baz_]);
       // Dart note: this test is different because we treat ["baz"] always as a
       // indexing operation.
       expectPath('foo["baz"]', 'foo.baz', 2, [#foo, #baz]);
@@ -108,23 +107,25 @@ main() {
     test('invalid path returns null value', () {
       var path = new PropertyPath('a b');
       expect(path.isValid, isFalse);
-      expect(path.getValueFrom({'a': {'b': 2}}), isNull);
+      expect(
+          path.getValueFrom({
+            'a': {'b': 2}
+          }),
+          isNull);
     });
-
 
     test('caching and ==', () {
       var start = new PropertyPath('abc[0]');
       for (int i = 1; i <= 100; i++) {
         expect(identical(new PropertyPath('abc[0]'), start), true,
-          reason: 'should return identical path');
+            reason: 'should return identical path');
 
         var p = new PropertyPath('abc[$i]');
         expect(identical(p, start), false,
             reason: 'different paths should not be merged');
       }
       var end = new PropertyPath('abc[0]');
-      expect(identical(end, start), false,
-          reason: 'first entry expired');
+      expect(identical(end, start), false, reason: 'first entry expired');
       expect(end, start, reason: 'different instances are equal');
     });
 
@@ -157,7 +158,9 @@ observePathTests() {
     expect(() => new PathObserver(123, 'foo.bar.baz').value, _throwsNSM('foo'));
 
     // shouldn't throw:
-    new PathObserver(123, '')..open((_) {})..close();
+    new PathObserver(123, '')
+      ..open((_) {})
+      ..close();
     new PropertyPath('').setValueFrom(null, null);
     new PropertyPath('').setValueFrom(123, 42);
     expect(() => new PropertyPath('foo.bar.baz').setValueFrom(123, 42),
@@ -191,9 +194,12 @@ observePathTests() {
     expect(new PathObserver(obj, 'value.value').value, 4);
   });
 
-
   test('get value at path ObservableMap', () {
-    var obj = toObservable({'a': {'b': {'c': 1}}});
+    var obj = toObservable({
+      'a': {
+        'b': {'c': 1}
+      }
+    });
 
     expect(new PathObserver(obj, '').value, obj);
     expect(new PathObserver(obj, 'a').value, obj['a']);
@@ -216,7 +222,7 @@ observePathTests() {
     new PropertyPath('foo').setValueFrom(obj, 3);
     expect(obj['foo'], 3);
 
-    var bar = toObservable({ 'baz': 3 });
+    var bar = toObservable({'baz': 3});
     new PropertyPath('bar').setValueFrom(obj, bar);
     expect(obj['bar'], bar);
 
@@ -244,12 +250,15 @@ observePathTests() {
       expect(new PathObserver(obj, 'foo').value, 2);
 
       new PropertyPath('foo').setValueFrom(obj, 3);
-    }).then(newMicrotask).then((_) {
-      expect(path.value, 3);
-
-    }).then(newMicrotask).then((_) {
-      expect(values, [2, 3]);
-    });
+    })
+        .then(newMicrotask)
+        .then((_) {
+          expect(path.value, 3);
+        })
+        .then(newMicrotask)
+        .then((_) {
+          expect(values, [2, 3]);
+        });
   });
 
   test('Observe and Unobserve - Paths', () {
@@ -274,7 +283,6 @@ observePathTests() {
       arr['bat'] = 'boo';
       batPath.close();
       arr['bat'] = 'boot';
-
     }).then(newMicrotask).then((_) {
       expect(fooValues, ['baz']);
       expect(batValues, []);
@@ -317,14 +325,16 @@ observePathTests() {
 
   for (var createModel in [() => new TestModel(), () => new WatcherModel()]) {
     test('Path Observation - ${createModel().runtimeType}', () {
-      var model = createModel()..a =
-          (createModel()..b = (createModel()..c = 'hello, world'));
+      var model = createModel()
+        ..a = (createModel()..b = (createModel()..c = 'hello, world'));
 
       var path = new PathObserver(model, 'a.b.c');
       var lastValue = null;
       var errorSeen = false;
       runZoned(() {
-        path.open((x) { lastValue = x; });
+        path.open((x) {
+          lastValue = x;
+        });
       }, onError: (e) {
         expect(e, _isNoSuchMethodOf('c'));
         errorSeen = true;
@@ -337,34 +347,46 @@ observePathTests() {
         expect(lastValue, 'hello, mom');
 
         model.a.b = createModel()..c = 'hello, dad';
-      }).then(newMicrotask).then((_) {
-        expect(lastValue, 'hello, dad');
+      })
+          .then(newMicrotask)
+          .then((_) {
+            expect(lastValue, 'hello, dad');
 
-        model.a = createModel()..b =
-            (createModel()..c = 'hello, you');
-      }).then(newMicrotask).then((_) {
-        expect(lastValue, 'hello, you');
+            model.a = createModel()..b = (createModel()..c = 'hello, you');
+          })
+          .then(newMicrotask)
+          .then((_) {
+            expect(lastValue, 'hello, you');
 
-        model.a.b = 1;
-        expect(errorSeen, isFalse);
-      }).then(newMicrotask).then((_) {
-        expect(errorSeen, isTrue);
-        expect(lastValue, 'hello, you');
+            model.a.b = 1;
+            expect(errorSeen, isFalse);
+          })
+          .then(newMicrotask)
+          .then((_) {
+            expect(errorSeen, isTrue);
+            expect(lastValue, 'hello, you');
 
-        // Stop observing
-        path.close();
+            // Stop observing
+            path.close();
 
-        model.a.b = createModel()..c = 'hello, back again -- but not observing';
-      }).then(newMicrotask).then((_) {
-        expect(lastValue, 'hello, you');
+            model.a.b = createModel()
+              ..c = 'hello, back again -- but not observing';
+          })
+          .then(newMicrotask)
+          .then((_) {
+            expect(lastValue, 'hello, you');
 
-        // Resume observing
-        new PathObserver(model, 'a.b.c').open((x) { lastValue = x; });
+            // Resume observing
+            new PathObserver(model, 'a.b.c').open((x) {
+              lastValue = x;
+            });
 
-        model.a.b.c = 'hello. Back for reals';
-      }).then(newMicrotask).then((_) {
-        expect(lastValue, 'hello. Back for reals');
-      });
+            model.a.b.c = 'hello. Back for reals';
+          })
+          .then(newMicrotask)
+          .then((_) {
+            expect(lastValue, 'hello. Back for reals');
+          });
     });
   }
 
@@ -394,7 +416,9 @@ observePathTests() {
     expect(() => observer.value, _throwsNSM('bar'));
     expect(model.getFooCalled, 1);
 
-    expect(() { observer.value = 123; }, _throwsNSM('bar='));
+    expect(() {
+      observer.value = 123;
+    }, _throwsNSM('bar='));
     expect(model.setFooCalled, [123]);
   });
 
@@ -443,18 +467,23 @@ observePathTests() {
   });
 
   test('regression for TemplateBinding#161', () {
-    var model = toObservable({'obj': toObservable({'bar': false})});
+    var model = toObservable({
+      'obj': toObservable({'bar': false})
+    });
     var ob1 = new PathObserver(model, 'obj.bar');
     var called = false;
-    ob1.open(() { called = true; });
+    ob1.open(() {
+      called = true;
+    });
 
     var obj2 = new PathObserver(model, 'obj');
-    obj2.open(() { model['obj']['bar'] = true; });
+    obj2.open(() {
+      model['obj']['bar'] = true;
+    });
 
-    model['obj'] = toObservable({ 'obj': 'obj' });
+    model['obj'] = toObservable({'obj': 'obj'});
 
-    return new Future(() {})
-        .then((_) => expect(called, true));
+    return new Future(() {}).then((_) => expect(called, true));
   });
 }
 
@@ -493,8 +522,9 @@ compoundObserverTests() {
     expect(observed, isNull);
   }
 
-  expectCompoundPathChanges(expectedNewValues,
-      expectedOldValues, expectedObserved, {deliver: true}) {
+  expectCompoundPathChanges(
+      expectedNewValues, expectedOldValues, expectedObserved,
+      {deliver: true}) {
     if (deliver) observer.deliver();
     expect(called, isTrue);
 
@@ -578,9 +608,14 @@ compoundObserverTests() {
     observer.addObserver(pathObserver3);
     observer.open(callback);
 
-    var expectedObs = [observerSentinelForTesting, pathObserver1,
-        observerSentinelForTesting, pathObserver2,
-        observerSentinelForTesting, pathObserver3];
+    var expectedObs = [
+      observerSentinelForTesting,
+      pathObserver1,
+      observerSentinelForTesting,
+      pathObserver2,
+      observerSentinelForTesting,
+      pathObserver3
+    ];
     model.a = -10;
     model.b = 20;
     model.c = 30;
@@ -615,8 +650,9 @@ compoundObserverTests() {
 
     var compound = new CompoundObserver();
     compound.addPath(model, 'a');
-    compound.addObserver(new ObserverTransform(new PathObserver(model, 'b'),
-                                               twice, setValue: half));
+    compound.addObserver(new ObserverTransform(
+        new PathObserver(model, 'b'), twice,
+        setValue: half));
     compound.addObserver(new PathObserver(otherModel, 'c'));
 
     combine(values) => values[0] + values[1] + values[2];
@@ -627,6 +663,7 @@ compoundObserverTests() {
       newValue = v;
       called = true;
     }
+
     expect(observer.open(transformCallback), 8);
 
     model.a = 2;
@@ -663,16 +700,19 @@ _isNoSuchMethodOf(String name) => predicate((e) =>
     // Dart2js and VM error messages are a bit different, but they both contain
     // the name.
     ('$e'.contains("'$name'") || // VM error
-     '$e'.contains('\'Symbol("$name")\''))); // dart2js error
+        '$e'.contains('\'Symbol("$name")\''))); // dart2js error
 
 class ObjectWithErrors {
   int getFooCalled = 0;
   List setFooCalled = [];
-  @reflectable get foo {
+  @reflectable
+  get foo {
     getFooCalled++;
     (this as dynamic).bar;
   }
-  @reflectable set foo(value) {
+
+  @reflectable
+  set foo(value) {
     setFooCalled.add(value);
     (this as dynamic).bar = value;
   }
@@ -684,7 +724,8 @@ class NoSuchMethodModel {
 
   // TODO(ahe): Remove @reflectable from here (once either of
   // http://dartbug.com/15408 or http://dartbug.com/15409 are fixed).
-  @reflectable noSuchMethod(Invocation invocation) {
+  @reflectable
+  noSuchMethod(Invocation invocation) {
     final name = invocation.memberName;
     log.add(name);
     if (name == #foo && invocation.isGetter) return _foo;
@@ -739,9 +780,12 @@ class TestModel extends Observable implements WatcherModel {
 class WatcherModel extends AutoObservable {
   // TODO(jmesserly): dart2js does not let these be on the same line:
   // @observable var a, b, c;
-  @observable var a;
-  @observable var b;
-  @observable var c;
+  @observable
+  var a;
+  @observable
+  var b;
+  @observable
+  var c;
 
   WatcherModel();
 }
