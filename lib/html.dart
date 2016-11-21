@@ -19,7 +19,7 @@ import 'observe.dart';
 /// An observable version of [window.location.hash].
 final ObservableLocationHash windowLocation = new ObservableLocationHash._();
 
-class ObservableLocationHash extends Observable {
+class ObservableLocationHash extends PropertyChangeNotifier {
   Object _currentHash;
 
   ObservableLocationHash._() {
