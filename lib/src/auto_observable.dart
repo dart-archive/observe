@@ -148,8 +148,7 @@ abstract class AutoObservable implements ChangeNotifier {
   ///   [AutoObservable.dirtyCheck] instead.
   @override
   void notifyChange([ChangeRecord record]) {
-    if (!hasObservers || record == null) return;
-
+    if (record == null || !hasObservers) return;
     if (_records == null) _records = [];
     _records.add(record);
   }
