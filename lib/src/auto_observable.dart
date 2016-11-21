@@ -13,7 +13,7 @@ import 'package:smoke/smoke.dart' as smoke;
 import 'dirty_check.dart' show dirtyCheckObservables, registerObservable;
 import 'metadata.dart' show ObservableProperty;
 
-abstract class AutoObservable implements Observable {
+abstract class AutoObservable implements ChangeNotifier {
   /// Performs dirty checking of objects that inherit from [AutoObservable].
   /// This scans all observed objects using mirrors and determines if any fields
   /// have changed. If they have, it delivers the changes for the object.
@@ -147,8 +147,8 @@ abstract class AutoObservable implements Observable {
   /// - Unlike [Observable] this will not schedule [deliverChanges]; use
   ///   [AutoObservable.dirtyCheck] instead.
   @override
-  void notifyChange(ChangeRecord record) {
-    if (!hasObservers) return;
+  void notifyChange([ChangeRecord record]) {
+    if (!hasObservers || record == null) return;
 
     if (_records == null) _records = [];
     _records.add(record);

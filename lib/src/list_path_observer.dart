@@ -14,7 +14,7 @@ import 'package:observe/observe.dart';
 
 /// Observes a path starting from each item in the list.
 @deprecated
-class ListPathObserver<E, P> extends Observable {
+class ListPathObserver<E, P> extends PropertyChangeNotifier {
   final ObservableList<E> list;
   final String _itemPath;
   final List<PathObserver> _observers = <PathObserver>[];
