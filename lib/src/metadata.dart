@@ -37,7 +37,7 @@ const Reflectable reflectable = const Reflectable();
 /// it available to `PathObserver` at runtime. For example:
 ///
 ///     @reflectable
-///     class Monster extends AutoObservable {
+///     class Monster extends Observable {
 ///       int _health;
 ///       int get health => _health;
 ///       ...

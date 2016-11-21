@@ -175,8 +175,7 @@ observePathTests() {
   });
 
   test('get value at path ObservableBox', () {
-    var obj =
-        new ObservableBox<dynamic>(new ObservableBox(new ObservableBox(1)));
+    var obj = new ObservableBox(new ObservableBox(new ObservableBox(1)));
 
     expect(new PathObserver(obj, '').value, obj);
     expect(new PathObserver(obj, 'value').value, obj.value);
@@ -189,7 +188,7 @@ observePathTests() {
     obj.value.value = new ObservableBox(3);
     expect(new PathObserver(obj, 'value.value.value').value, 3);
 
-    obj.value = new ObservableBox<int>(4);
+    obj.value = new ObservableBox(4);
     expect(() => new PathObserver(obj, 'value.value.value').value,
         _throwsNSM('value'));
     expect(new PathObserver(obj, 'value.value').value, 4);
@@ -754,7 +753,7 @@ class IndexerModel implements Indexable<String, dynamic> {
 }
 
 @reflectable
-class TestModel extends ChangeNotifier implements WatcherModel {
+class TestModel extends Observable implements WatcherModel {
   var _a, _b, _c;
 
   TestModel([this._a, this._b, this._c]);
@@ -775,15 +774,6 @@ class TestModel extends ChangeNotifier implements WatcherModel {
 
   void set c(newValue) {
     _c = notifyPropertyChange(#c, _c, newValue);
-  }
-
-  @override
-  /*=T*/ notifyPropertyChange/*<T>*/(
-      Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
-    if (hasObservers && oldValue != newValue) {
-      notifyChange(new PropertyChangeRecord(this, field, oldValue, newValue));
-    }
-    return newValue;
   }
 }
 

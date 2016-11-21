@@ -85,7 +85,7 @@ _runTests() {
 _nextMicrotask(_) => new Future(() {});
 
 @reflectable
-class TestModel extends PropertyChangeNotifier {
+class TestModel extends Observable {
   var _a, _b;
   TestModel();
 

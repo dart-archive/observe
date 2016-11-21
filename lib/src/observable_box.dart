@@ -13,7 +13,7 @@ import 'package:observe/observe.dart';
 /// value. For other cases, it is better to use [AutoObservableList],
 /// [AutoObservableMap], or a custom [AutoObservable] implementation based on
 /// [AutoObservable]. The property name for changes is "value".
-class ObservableBox<T> extends PropertyChangeNotifier {
+class ObservableBox<T> extends Observable {
   T _value;
 
   ObservableBox([T initialValue]) : _value = initialValue;

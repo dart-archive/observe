@@ -1,5 +1,5 @@
 name: observe
-version: 0.15.0
+version: 0.14.0
 author: Polymer.dart Authors <web-ui-dev@dartlang.org>
 description: >
   Observable properties and objects for use in template_binding.
@@ -13,7 +13,7 @@ dependencies:
   barback: '>=0.14.2 <0.16.0'
   func: ^0.1.0
   logging: '>=0.9.0 <0.12.0'
-  observable: '^0.17.0'
+  observable: '^0.14.0'
   path: '>=0.9.0 <2.0.0'
   smoke: '>=0.1.0 <0.4.0'
   source_maps: '>=0.9.4 <0.11.0'
