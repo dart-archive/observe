@@ -259,7 +259,7 @@ SimpleIdentifier _getSimpleIdentifier(Identifier id) =>
     id is PrefixedIdentifier ? id.identifier : id;
 
 bool _hasKeyword(Token token, Keyword keyword) =>
-    token?.type == TokenType.KEYWORD && token.lexeme == keyword.syntax;
+    token?.type.isKeyword && token.lexeme == keyword.syntax;
 
 String _getOriginalCode(TextEditTransaction code, AstNode node) =>
     code.original.substring(node.offset, node.end);
