@@ -2,6 +2,11 @@
 
 * Update to use new analyzer API
 
+#### 0.15.0
+
+* update to use package:observable 0.17.0
+* cleanup and format
+
 #### 0.14.0
 
 * Update to be built on top of `package:observable`. Contains the following
