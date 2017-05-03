@@ -1,3 +1,7 @@
+#### 0.15.1
+
+* Update to use new analyzer API
+
 #### 0.14.0
 
 * Update to be built on top of `package:observable`. Contains the following
