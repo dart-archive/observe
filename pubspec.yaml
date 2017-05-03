@@ -24,7 +24,7 @@ dev_dependencies:
   benchmark_harness: '>=1.0.0 <2.0.0'
   browser: any
   chart: '>=1.0.8 <2.0.0'
-  test: '^0.12.0'
+  test: '^0.12.18+1'
   stack_trace: '>=0.9.1 <2.0.0'
 environment:
   sdk: ">=1.9.0 <2.0.0"
