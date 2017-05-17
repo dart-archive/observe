@@ -107,7 +107,8 @@ ZoneSpecification dirtyCheckZoneSpec() {
     });
   }
 
-  Func0 wrapCallback(Zone self, ZoneDelegate parent, Zone zone, f()) {
+  ZoneCallback<R> wrapCallback<R>(
+      Zone self, ZoneDelegate parent, Zone zone, R f()) {
     // TODO(jmesserly): why does this happen?
     if (f == null) return f;
     return () {
@@ -116,7 +117,8 @@ ZoneSpecification dirtyCheckZoneSpec() {
     };
   }
 
-  Func1 wrapUnaryCallback(Zone self, ZoneDelegate parent, Zone zone, f(x)) {
+  ZoneCallback<R, T> wrapUnaryCallback<R, T>(
+      Zone self, ZoneDelegate parent, Zone zone, R f(T x)) {
     // TODO(jmesserly): why does this happen?
     if (f == null) return f;
     return (x) {
