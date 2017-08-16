@@ -117,7 +117,7 @@ ZoneSpecification dirtyCheckZoneSpec() {
     };
   }
 
-  ZoneCallback<R, T> wrapUnaryCallback<R, T>(
+  ZoneUnaryCallback<R, T> wrapUnaryCallback<R, T>(
       Zone self, ZoneDelegate parent, Zone zone, R f(T x)) {
     // TODO(jmesserly): why does this happen?
     if (f == null) return f;
