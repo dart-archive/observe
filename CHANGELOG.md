@@ -1,3 +1,7 @@
+#### 0.15.2
+
+* Update to use strong-mode clean Zone API.
+
 #### 0.15.1
 
 * Update to use new analyzer API
