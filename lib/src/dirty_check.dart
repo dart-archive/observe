@@ -14,7 +14,6 @@ library observe.src.dirty_check;
 
 import 'dart:async';
 
-import 'package:func/func.dart';
 import 'package:logging/logging.dart';
 import 'package:observable/observable.dart' as obs show Observable;
 

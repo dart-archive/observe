@@ -869,7 +869,7 @@ class _ObservedSet {
     if (obj is Observable) _observeStream(obj.changes);
   }
 
-  void _observeStream(Stream stream) {
+  void _observeStream(Stream<List<ChangeRecord>> stream) {
     // TODO(jmesserly): we hash on streams as we have two separate change
     // streams for ObservableList. Not sure if that is the design we will use
     // going forward.

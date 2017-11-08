@@ -127,8 +127,7 @@ abstract class AutoObservable implements ChangeNotifier {
   ///
   /// For convenience this returns [newValue].
   @override
-  /*=T*/ notifyPropertyChange/*<T>*/(
-      Symbol field, /*=T*/ oldValue, /*=T*/ newValue) {
+  T notifyPropertyChange<T>(Symbol field, T oldValue, T newValue) {
     if (hasObservers && oldValue != newValue) {
       notifyChange(new PropertyChangeRecord(this, field, oldValue, newValue));
     }
